@@ -1,0 +1,303 @@
+You are extending an existing full-stack app called **Human Upgrade (Longevity OS)**.
+
+The app already has:
+- Next.js + TypeScript frontend
+- Supabase (Postgres + Auth) backend
+- User accounts
+- Biomarker storage
+- Basic dashboards and recommendations
+- Stripe subscriptions
+- Medical disclaimer and safety guardrails
+
+Now your job is to **add deep wearable integrations** for:
+1. **Oura Ring**
+2. **WHOOP**
+3. **Apple Health / Apple Watch (via HealthKit, through a separate iOS client)**
+
+The goal: turn Human Upgrade into a central “health brain” that pulls sleep, HRV, recovery and activity data from these devices and feeds it into the existing decision engine and dashboards.
+
+---
+
+## HIGH-LEVEL REQUIREMENTS
+
+1. Create a **Connections / Integrations** section in the app:
+   - Path: `/integrations` (linked from the main navigation or Settings).
+   - Show cards for:
+     - Oura Ring
+     - WHOOP
+     - Apple Health (Apple Watch)
+   - Each card should show:
+     - Connection status: “Not connected / Connected (last sync: timestamp)”
+     - A “Connect” / “Reconnect” button
+     - A “Disconnect” button (this should revoke tokens and stop syncing).
+
+2. All wearable data must be stored in Supabase in a normalized, scalable schema.
+
+3. For Oura and WHOOP, implement full OAuth flows and background sync jobs.
+
+4. For Apple Health / Apple Watch:
+   - Backend must expose clear REST API endpoints that a future iOS app (using HealthKit) can call to push data into Human Upgrade.
+   - You do **NOT** need to write the iOS/HealthKit client code here, but you must design the backend endpoints and data schema ready to receive Apple Health data.
+
+5. Follow all existing safety and privacy principles:
+   - No medical diagnosis or prescription.
+   - No drug/peptide/TRT dosing.
+   - Only educational, lifestyle-oriented guidance and trends.
+   - Strong emphasis on privacy and user consent.
+   - Ability to delete/clear wearable data per user.
+
+---
+
+## DATA MODEL – DATABASE SCHEMA (Supabase / Postgres)
+
+Add the following tables (or adjust if some already exist):
+
+1. **wearable_connections**
+   - id (uuid, primary key)
+   - user_id (references users.id)
+   - provider (text) – enum-like: 'oura', 'whoop', 'apple_health'
+   - access_token (text, encrypted or stored securely)
+   - refresh_token (text, nullable, for Oura/WHOOP)
+   - expires_at (timestamptz, nullable)
+   - status (text) – 'connected', 'disconnected', 'error'
+   - last_synced_at (timestamptz, nullable)
+   - created_at, updated_at (timestamptz)
+
+2. **wearable_daily_metrics**
+   - id (uuid, pk)
+   - user_id (fk)
+   - provider (text) – 'oura', 'whoop', 'apple_health'
+   - date (date)
+   - sleep_duration_minutes (integer, nullable)
+   - sleep_score (integer, nullable)
+   - readiness_score (integer, nullable) -- for Oura or WHOOP-like
+   - recovery_score (integer, nullable) -- for WHOOP
+   - hrv_ms (numeric, nullable)
+   - resting_hr (numeric, nullable)
+   - steps (integer, nullable)
+   - calories (numeric, nullable)
+   - activity_score (integer, nullable)
+   - raw_payload (jsonb) -- full original provider payload snapshot
+   - created_at, updated_at (timestamptz)
+
+3. **wearable_sync_logs**
+   - id (uuid, pk)
+   - user_id (fk, nullable)
+   - provider (text)
+   - sync_started_at (timestamptz)
+   - sync_finished_at (timestamptz, nullable)
+   - status (text) – 'success', 'partial', 'error'
+   - error_message (text, nullable)
+   - meta (jsonb, nullable)
+   - created_at (timestamptz)
+
+Make sure RLS (Row Level Security) is enabled and only the owner user can read their own records.
+
+---
+
+## OURA INTEGRATION
+
+1. Assume we have Oura developer credentials available as environment variables:
+   - `OURA_CLIENT_ID`
+   - `OURA_CLIENT_SECRET`
+   - `OURA_REDIRECT_URI`
+
+2. Implement the OAuth flow:
+
+   - **GET** `/api/integrations/oura/connect`
+     - Redirects user to Oura’s OAuth authorization URL.
+     - Request scopes needed for:
+       - sleep
+       - readiness
+       - activity
+       - heart rate / HRV (if available).
+
+   - **GET** `/api/integrations/oura/callback`
+     - Accepts `code` from Oura.
+     - Exchanges `code` for access_token (+ refresh_token).
+     - Saves/updates a row in `wearable_connections` with:
+       - provider = 'oura'
+       - user_id = current user
+       - access_token, refresh_token, expires_at
+       - status = 'connected'
+       - last_synced_at = null (or now).
+
+3. Implement a sync function (can be triggered as an API route or background job):
+
+   - **POST** `/api/integrations/oura/sync`
+     - For the current user:
+       - Fetch all Oura data since `last_synced_at` (or for last N days initially).
+       - Endpoints: sleep, readiness, activity (use Oura Cloud API).
+       - For each day, compute/aggregate:
+         - sleep_duration_minutes
+         - sleep_score
+         - readiness_score
+         - hrv_ms (night average if available)
+         - resting_hr
+         - steps
+         - calories
+       - Upsert into `wearable_daily_metrics` by `(user_id, provider, date)`.
+       - Update `wearable_connections.last_synced_at`.
+       - Insert record into `wearable_sync_logs`.
+
+Make sure to handle token refresh if `access_token` expired.
+
+---
+
+## WHOOP INTEGRATION
+
+Do something similar to Oura:
+
+1. Use env vars:
+   - `WHOOP_CLIENT_ID`
+   - `WHOOP_CLIENT_SECRET`
+   - `WHOOP_REDIRECT_URI`
+
+2. Implement OAuth endpoints:
+   - `/api/integrations/whoop/connect`
+   - `/api/integrations/whoop/callback`
+
+3. Implement sync:
+   - `/api/integrations/whoop/sync`
+   - Fetch:
+     - recovery
+     - sleep
+     - strain/activity
+   - Map them into `wearable_daily_metrics`:
+     - recovery_score
+     - sleep_duration_minutes
+     - sleep_score
+     - activity_score
+     - hrv_ms (if available)
+     - resting_hr
+     - steps (if available)
+   - Upsert by `(user_id, provider, date)` and create sync_logs.
+
+---
+
+## APPLE HEALTH / APPLE WATCH (HEALTHKIT-BACKED)
+
+Because Apple HealthKit is only accessible on-device in an iOS app:
+
+1. Do **NOT** implement OAuth for Apple Health.  
+   Instead, implement backend endpoints that will accept data PUSHED from an iOS app that uses HealthKit.
+
+2. Use the same `wearable_daily_metrics` table with `provider = 'apple_health'`.
+
+3. Implement endpoints:
+
+   - **POST** `/api/integrations/apple-health/ingest-daily`
+     - Authenticated via Supabase user token / session.
+     - Request body structure example:
+       ```json
+       {
+         "date": "2025-01-10",
+         "sleep_duration_minutes": 415,
+         "hrv_ms": 82,
+         "resting_hr": 54,
+         "steps": 10432,
+         "calories": 2350,
+         "activity_score": 75,
+         "raw_payload": { "source": "healthkit", "...": "..." }
+       }
+       ```
+     - The route:
+       - Validates the user.
+       - Upserts into `wearable_daily_metrics` for `user_id + date + provider='apple_health'`.
+       - Returns success/failure.
+
+   - **GET** `/api/integrations/apple-health/config`
+     - Returns a minimal config for a future iOS client:
+       - what metrics to send (keys)
+       - how often to sync
+       - any version info.
+
+4. Add in the UI (under `/integrations`):
+
+   - Apple Health card that explains:
+     - “To connect Apple Watch, install our iOS app and enable Apple Health permissions. The iOS app will sync your data to Human Upgrade.”
+   - Show connection status if there is at least one `wearable_daily_metrics` record for provider='apple_health' in the last N days.
+
+---
+
+## INTEGRATIONS UI
+
+On `/integrations` page:
+
+- Show a grid of cards: Oura, WHOOP, Apple Health.
+- For each provider:
+  - Show provider logo and name.
+  - Show current status:
+    - “Connected (Last sync: …)”  
+    - “Not connected”
+  - Buttons:
+    - For Oura/WHOOP:
+      - Connect → call `/api/integrations/{provider}/connect` (redirect).
+      - Sync now → call `/api/integrations/{provider}/sync`.
+      - Disconnect → API to mark connection status 'disconnected' and clear tokens.
+    - For Apple:
+      - Show instructions and a “View setup instructions” modal.
+
+---
+
+## DASHBOARD INTEGRATION
+
+Extend the existing dashboards:
+
+1. On the main dashboard:
+   - Add a “Wearable Insights” section with:
+     - Combined sleep trend (last 7–30 days).
+     - Combined HRV trend.
+     - Combined resting HR trend.
+     - If multiple providers exist, pick a priority (Apple > Oura > WHOOP) or show aggregated metrics.
+
+2. On a new page `/wearables`:
+   - Show:
+     - A timeline chart per metric (sleep, HRV, RHR, steps).
+     - Filter by provider and by date range.
+   - Show basic insights like:
+     - “Last 7 days vs previous 7 days” deltas.
+
+3. Feed wearable data into the existing decision engine as additional context:
+   - For example, rules such as:
+     - If HRV trend is significantly down and sleep_duration is low → add a “Recovery” flag.
+     - If steps are consistently below a certain threshold → “Movement priority” flag.
+   - These flags should be combined with biomarkers and subjective check-ins.
+
+Make sure any AI-generated recommendations still:
+- Avoid diagnosis.
+- Avoid medication dosing.
+- Emphasize lifestyle and “talk to your clinician” for anything serious.
+
+---
+
+## PRIVACY, SAFETY & CONTROL
+
+- Add a toggle or section in Settings → “Data & Privacy”:
+  - List connected providers.
+  - Allow user to:
+    - Disconnect
+    - Delete all wearable data from Human Upgrade
+  - Explain clearly what data is stored and why.
+
+- Ensure that:
+  - All API routes are properly protected (only the logged-in user can access their data).
+  - No tokens or health data are ever exposed to the client unnecessarily.
+
+---
+
+## IMPLEMENTATION NOTES
+
+- Use server-side environment variables for all provider secrets.
+- Wrap all external API calls (Oura/WHOOP) with proper error handling and retries.
+- For now, it is enough to implement a manual sync button per user; optionally, you can add a simple cron-like function or scheduled job endpoint that can be triggered later.
+- Provide TypeScript types for the wearable-related entities.
+- Update the README to document:
+  - How to configure Oura/WHOOP API keys.
+  - How Apple Health integration works conceptually and which endpoints the iOS client should call.
+
+Start by:
+1) Designing/creating the database schema,
+2) Implementing Oura integration end-to-end (connect + sync + dashboard),
+3) Then cloning the pattern for WHOOP,
+4) Then adding the Apple Health ingest endpoints and UI.

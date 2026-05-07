@@ -1,0 +1,83 @@
+You are working inside my existing Replit project “Human Upgrade” (Next.js + React + Tailwind, dark UI with red accents).
+Goal: Add 5 features that make the app unique and increase daily usage/retention, without changing the current design language.
+
+IMPORTANT UX RULES
+- Keep the current layout: left sidebar, top bar, dashboard center.
+- Use the existing typography and colors (dark background, red primary).
+- Add features incrementally; do not break existing login/upload flows.
+- No medical diagnosis, no treatment instructions, no dosage advice. All guidance must be lifestyle-focused and non-medical.
+
+FEATURES TO IMPLEMENT
+1) Daily Upgrade Score (0–100)
+- Add to Dashboard a large circular score widget.
+- Score should be computed from available user data:
+  - If wearable data exists: sleep duration, sleep consistency, HRV trend, resting HR, steps.
+  - If no wearable data yet: use last check-in + habits completion + last bloodwork “risk flags count”.
+- Provide a simple explanation of what drove today’s score (“Top 3 drivers”).
+- Store daily score history for charts (last 7 and 30 days).
+- Create a DB table/collection: daily_scores (user_id, date, score, drivers_json).
+
+2) Today’s Protocol (3 Bullet Rule)
+- Under the score widget, show exactly 3 actionable items for today:
+  - Sleep focus, Training focus, Nutrition focus.
+- Each item must be short (max 1 sentence).
+- Use non-medical language. Example:
+  - “Go to bed 45 minutes earlier.”
+  - “Keep training intensity moderate today.”
+  - “Prioritize protein at breakfast.”
+- Add a “Mark as done” checkbox for each item and persist completion.
+- Create DB table: daily_protocols (user_id, date, items_json, completed_json).
+
+3) Streaks & Levels
+- Add a “Streak” indicator to Dashboard top-right (near bell icon).
+- Streak increases when user completes at least 2 of 3 protocol items OR completes a daily check-in.
+- Add Levels: Level 1–10 with names (Baseline → Elite).
+- Level XP increases with: daily check-in, protocol completion, weekly report viewed, device connected, PDF upload.
+- Create DB table: user_progress (user_id, streak_count, current_level, xp, last_active_date).
+
+4) Weekly Human Upgrade Report (Narrative)
+- Create a weekly report generator that summarizes:
+  - Score trend, sleep trend, HRV trend (if available), habits consistency, key wins, next-week focus.
+- Output as a narrative card (not PDF) inside a new page: /reports/weekly
+- Also show a compact preview on Dashboard with “View report”.
+- Store weekly reports in DB table: weekly_reports (user_id, week_start_date, content_json, viewed_at).
+
+5) Anonymous Benchmarking (Safe & Optional)
+- Add a “Benchmark” card that compares user to an anonymized cohort:
+  - Cohort groups by age range + sex + activity level (self-reported).
+- Show 2 comparisons max (e.g., sleep duration vs cohort, score vs cohort).
+- Must be anonymous and not expose any personal data.
+- If no cohort data, show “Benchmark available once we have more users” and hide comparisons.
+- Create DB table: cohort_stats (cohort_key, metrics_json, updated_at).
+
+TECH REQUIREMENTS
+- Identify existing stack in repo (Next.js App Router vs Pages Router, DB used: Postgres/Prisma/Supabase/etc).
+- Use existing DB connection patterns. If none exists, add Prisma + SQLite for dev as fallback.
+- Add environment variables safely (do not print secrets).
+- Implement API routes for:
+  - POST /api/daily-score/recompute
+  - POST /api/protocol/today
+  - POST /api/progress/update
+  - GET  /api/reports/weekly?week=...
+  - GET  /api/benchmark
+- Add minimal UI components using existing component style; no design overhaul.
+- Add basic error handling and loading states.
+
+DELIVERABLES
+- Working UI on Dashboard showing:
+  - Daily Upgrade Score widget
+  - Today’s Protocol (3 items + completion)
+  - Streak + Level
+  - Weekly report preview link
+  - Benchmark card
+- API routes + DB migrations
+- A short README section explaining how to test these features locally:
+  - how to create a test user
+  - how to trigger recompute
+  - what sample data is used if wearable data is missing.
+
+Start by scanning the repository structure and telling me:
+1) what router (App/Pages) we use
+2) what DB we use
+3) where the Dashboard page is
+Then implement feature #1 first, run it, and proceed feature by feature.

@@ -1,0 +1,118 @@
+SECTION 6 — CTA AREA (REVISION)
+
+Show two premium-action buttons with high contrast and glowing edges.
+
+Primary CTA (blue):
+
+“Start My Upgrade”
+
+Secondary CTA (outline-glow):
+
+“See What You’ll Get Before Joining”
+→ opens a sample transformation protocol preview (beautiful, PDF-like UI)
+
+Micro-text under CTA (must feel safe & trustworthy):
+
+“No risk. Cancel anytime.”
+
+No AI wording. No technical language.
+
+🤝 SECTION 7 — TRUST BUILDERS (REVISION)
+
+Use subtle premium badges designed for credibility:
+
+“Precision biomarker interpretation”
+
+“Medical-grade data extraction”
+
+“Built for high-performing individuals”
+
+“Fully personalized based on your bloodwork”
+
+“Backed by modern health science”
+
+Keep badges minimal, tasteful, luxury-style, using brand colors & soft glows.
+
+No mention of AI, algorithms, or OS.
+
+📱 SECTION 8 — MOBILE OPTIMIZED (REVISION)
+
+Mobile landing screen must show:
+
+Logo at the top (Human Upgrade OS branding, but no ‘OS’ printed in marketing text)
+
+Hero Text — premium, emotional, inspiring
+Example:
+“Upgrade Your Biology.
+Become the strongest version of yourself.”
+
+Two mini value cards showing results-oriented benefits
+
+CTA section
+
+Preview carousel (sample insights, protocol pages, scorecards)
+
+Testimonials slider with real transformation statements
+
+Layout must be clean, modern, and bold.
+
+🧬 SECTION 9 — OVERALL UX FLOW (REVISION)
+
+The user experience flow must feel natural, luxurious, and seamless.
+
+User opens the app (no membership yet)
+
+Sees a stunning, cinematic transformation-oriented landing screen
+
+Clicks “Start My Upgrade”
+
+Redirect → Pricing & Membership Plans
+
+Secure Stripe Checkout
+
+After payment → redirected to personal dashboard
+
+User uploads bloodwork PDF
+
+System generates their personalized optimization protocol
+
+User feels improved, empowered, motivated
+
+Flow must be frictionless and emotionally compelling.
+
+🎁 SECTION 10 — DELIVERABLES (REVISION)
+
+AI must output a complete, production-ready landing experience, including:
+
+Full React + Next.js landing page
+
+Premium hero section
+
+Animations (DNA, glow, floating particles)
+
+Icons & badges
+
+CTA area
+
+Testimonials slider
+
+Gradient backgrounds
+
+Branding integration (logo, palette, typography)
+
+Placeholder sample protocol preview
+
+Fully responsive design
+
+Modern micro-interactions
+
+Clean, maintainable code ready for integration
+
+No AI branding.
+No OS terminology shown to users.
+Only premium performance health aesthetic.
+
+🧠 FINAL INSTRUCTION (REVISION)
+
+Create this entire pre-subscription landing experience as a high-conversion, luxury-grade human performance & wellness interface.
+Do NOT include any references to AI or OS anywhere in the customer-facing UI.
