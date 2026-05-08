@@ -93,6 +93,18 @@ app.get("/health", (_req, res) => {
 });
 
 (async () => {
+  // Auto-migrate: add missing columns to existing tables
+  try {
+    const { pool } = await import("./db");
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT FALSE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verification_token TEXT;
+    `);
+    console.log("✅ DB migration: email_verified columns ensured");
+  } catch (err: any) {
+    console.error("DB migration warning:", err.message);
+  }
+
   setupGoogleAuth();
   await registerRoutes(app);
 
