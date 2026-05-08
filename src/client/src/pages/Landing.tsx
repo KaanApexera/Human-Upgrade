@@ -1,5 +1,25 @@
 import { useState } from "react";
 import { useLocation, Link, Redirect } from "wouter";
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-white/[0.08] rounded-xl overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-white/[0.03] transition-colors"
+      >
+        <span className="text-white font-medium text-sm sm:text-base pr-4">{question}</span>
+        <span className={`text-white/40 text-xl flex-shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
+      </button>
+      {open && (
+        <div className="px-6 pb-5">
+          <p className="text-white/50 text-sm leading-relaxed">{answer}</p>
+        </div>
+      )}
+    </div>
+  );
+}
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
@@ -80,14 +100,20 @@ export default function Landing() {
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
           <div className="max-w-2xl">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-xs font-bold text-red-400 backdrop-blur-sm animate-pulse">
+              <button
+                onClick={() => setLocation("/register?plan=beta_monthly")}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-xs font-bold text-red-400 backdrop-blur-sm animate-pulse hover:bg-red-600/30 transition-colors cursor-pointer"
+              >
                 <Zap className="w-3.5 h-3.5" />
                 BETA — First 50 Users Only
-              </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/70 backdrop-blur-sm">
+              </button>
+              <button
+                onClick={() => setLocation("/register?plan=beta_monthly")}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/70 backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer"
+              >
                 <Dna className="w-3.5 h-3.5 text-red-400" />
                 Full Pro Access · $1/month
-              </div>
+              </button>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
@@ -420,6 +446,48 @@ export default function Landing() {
             <ChevronRight className="w-5 h-5" />
           </button>
           <p className="text-white/20 text-sm mt-4">No credit card required</p>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="py-24 bg-[#060606]" id="faq">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-red-500 mb-3 block">FAQ</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">Frequently Asked Questions</h2>
+            <p className="text-white/40 mt-3 text-base">Everything you need to know about optimizing your biology</p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "What is biological age and how is it calculated?",
+                a: "Biological age measures how old your body actually functions at a cellular level — independent of your birth date. Human Upgrade OS calculates your Performance Age™ by analyzing 50+ biomarkers from your blood test, including inflammation markers, hormone levels, metabolic health, and cellular aging indicators. A lower biological age than your chronological age means your body is performing ahead of schedule.",
+              },
+              {
+                q: "How does AI blood test analysis work?",
+                a: "Upload a PDF or photo of your standard blood panel. Our AI reads and extracts 50+ biomarkers automatically — including testosterone, cortisol, insulin, CRP, HbA1c, and more. Within minutes it generates your biological age score, flags values outside optimal ranges, and creates a personalized protocol with specific supplements, sleep targets, peptides, and lifestyle interventions.",
+              },
+              {
+                q: "What are peptide protocols and who are they for?",
+                a: "Peptides are short chains of amino acids that signal your body to repair, regenerate, and optimize specific functions. Common peptides include BPC-157 (gut and tissue repair), TB-500 (recovery and healing), CJC-1295 and Ipamorelin (growth hormone optimization), and Sermorelin. We analyze your biomarkers and readiness scores to recommend which peptides fit your biology, with exact dosing schedules.",
+              },
+              {
+                q: "What blood tests do I need?",
+                a: "Any standard blood panel works — from your doctor, a private lab, or a home test kit. The more comprehensive your panel, the more detailed your protocol. At minimum, a basic metabolic panel, CBC, lipid panel, and hormone panel give excellent results. You can also upload partial panels and the AI works with whatever markers are available.",
+              },
+              {
+                q: "How quickly will I see results?",
+                a: "Most users notice improvements in energy, sleep quality, and recovery within 4–8 weeks of consistently following their protocol. Measurable biomarker improvements typically appear in blood work after 60–90 days. Biological age scores can shift by 2–5 years within 6 months of diligent protocol adherence. Your protocol updates automatically with each new lab upload.",
+              },
+              {
+                q: "Is this a medical service?",
+                a: "No. Human Upgrade OS is a health optimization and information platform, not a medical device or service. It does not diagnose, treat, or prescribe. All protocols are educational and should be discussed with your healthcare provider. Always consult a licensed physician for medical decisions.",
+              },
+            ].map(({ q, a }, i) => (
+              <FaqItem key={i} question={q} answer={a} />
+            ))}
+          </div>
         </div>
       </section>
 

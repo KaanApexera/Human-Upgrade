@@ -49,6 +49,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
+  getUserByVerificationToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, data: Partial<User>): Promise<User | undefined>;
   
@@ -128,6 +129,8 @@ export interface IStorage {
   deleteBiomarkerDictionaryEntry(id: string): Promise<void>;
   
   // Admin
+  promoteToAdmin(email: string): Promise<{ success: boolean; message: string }>;
+  verifyAllUsers(): Promise<void>;
   isAdmin(userId: string): Promise<boolean>;
   getUsageMetrics(): Promise<{
     totalUsers: number;
@@ -229,6 +232,11 @@ export class DatabaseStorage implements IStorage {
 
   async getUserByResetToken(token: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.passwordResetToken, token));
+    return user || undefined;
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
     return user || undefined;
   }
 
@@ -625,6 +633,19 @@ export class DatabaseStorage implements IStorage {
     await db.delete(biomarkerDictionary).where(eq(biomarkerDictionary.id, id));
   }
 
+  async verifyAllUsers(): Promise<void> {
+    await db.update(users).set({ emailVerified: true });
+  }
+
+  async promoteToAdmin(email: string): Promise<{ success: boolean; message: string }> {
+    const user = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (!user[0]) return { success: false, message: "User not found" };
+    const existing = await db.select().from(adminUsers).where(eq(adminUsers.userId, user[0].id)).limit(1);
+    if (existing[0]) return { success: true, message: "Already an admin" };
+    await db.insert(adminUsers).values({ userId: user[0].id, role: "super_admin" });
+    return { success: true, message: `${email} is now super_admin` };
+  }
+
   // Admin
   async isAdmin(userId: string): Promise<boolean> {
     // Check adminUsers table
@@ -633,6 +654,12 @@ export class DatabaseStorage implements IStorage {
       .from(adminUsers)
       .where(eq(adminUsers.userId, userId));
     if (admin) return true;
+
+    // Check ADMIN_EMAIL env var fallback (set on Railway)
+    if (process.env.ADMIN_EMAIL) {
+      const user = await this.getUser(userId);
+      if (user?.email === process.env.ADMIN_EMAIL) return true;
+    }
 
     // If no admins are configured, grant access to the earliest registered user (app owner)
     const allAdmins = await db.select().from(adminUsers);

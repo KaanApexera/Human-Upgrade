@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useLocation, Link } from "wouter";
+import { useLocation, useSearch, Link } from "wouter";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,8 @@ const PRICING_PLANS = {
       { text: "Basic protocol", included: true },
       { text: "Unlimited uploads", included: false },
       { text: "Peptide & GLP-1 protocols", included: false },
-      { text: "AI meal plan", included: false },
-      { text: "Wearable sync", included: false },
+      { text: "AI meal plan (coming soon)", included: false },
+      { text: "Wearable sync (coming soon)", included: false },
       { text: "Priority support", included: false },
     ],
   },
@@ -44,8 +44,8 @@ const PRICING_PLANS = {
       { text: "Performance Age™ score", included: true },
       { text: "Full protocol generation", included: true },
       { text: "Peptide & GLP-1 protocols", included: true },
-      { text: "AI meal plan generator", included: true },
-      { text: "Wearable sync (Oura, WHOOP)", included: true },
+      { text: "AI meal plan (coming soon)", included: true },
+      { text: "Wearable sync (coming soon)", included: true },
       { text: "Weekly upgrade report", included: true },
       { text: "Priority support", included: true },
     ],
@@ -64,8 +64,8 @@ const PRICING_PLANS = {
       { text: "Performance Age™ score", included: true },
       { text: "Full protocol generation", included: true },
       { text: "Peptide & GLP-1 protocols", included: true },
-      { text: "AI meal plan generator", included: true },
-      { text: "Wearable sync (Oura, WHOOP)", included: true },
+      { text: "AI meal plan (coming soon)", included: true },
+      { text: "Wearable sync (coming soon)", included: true },
       { text: "Weekly upgrade report", included: true },
       { text: "Priority support", included: true },
     ],
@@ -82,10 +82,14 @@ interface PromoValidation {
 
 export default function Pricing() {
   const [, setLocation] = useLocation();
+  const search = useSearch();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [promoValidation, setPromoValidation] = useState<PromoValidation | null>(null);
   const [promoError, setPromoError] = useState<string | null>(null);
+  const [autoTriggered, setAutoTriggered] = useState(false);
+
+  const planFromUrl = new URLSearchParams(search).get("plan");
 
   const { data: user } = useQuery<User>({
     queryKey: ["/api/user"],
@@ -125,6 +129,18 @@ export default function Pricing() {
       }
     },
   });
+
+  // Auto-trigger checkout when user just registered with a plan in the URL
+  useEffect(() => {
+    if (user && planFromUrl && !autoTriggered && !subscribeMutation.isPending) {
+      const validPlans = ["beta_monthly", "premium_monthly", "premium_annual", "basic"];
+      if (validPlans.includes(planFromUrl)) {
+        setAutoTriggered(true);
+        setSelectedPlan(planFromUrl);
+        subscribeMutation.mutate(planFromUrl);
+      }
+    }
+  }, [user, planFromUrl, autoTriggered]);
 
   const handleApplyPromo = () => {
     const code = promoCode.trim();

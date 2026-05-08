@@ -14,7 +14,8 @@ import {
   User,
   Loader2,
   Minimize2,
-  Maximize2
+  Maximize2,
+  Syringe,
 } from "lucide-react";
 
 interface Message {
@@ -25,12 +26,45 @@ interface Message {
   isEmergency?: boolean;
 }
 
+export interface ChatTrigger {
+  type: "peptide" | "glp1" | "general";
+  proactiveMessage: string;
+}
+
 interface AIChatAssistantProps {
   protocolData?: any;
   biomarkerData?: any;
+  triggerContext?: ChatTrigger | null;
+  onTriggerConsumed?: () => void;
 }
 
-export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistantProps) {
+const QUICK_SUGGESTIONS: Record<string, string[]> = {
+  peptide: [
+    "Give me a day-by-day guide for my peptide stack",
+    "Week-by-week dosing schedule",
+    "Can I stack these peptides together safely?",
+    "What if I miss a dose — flexible alternatives?",
+  ],
+  glp1: [
+    "Give me a week-by-week GLP-1 titration guide",
+    "What should I eat while on GLP-1?",
+    "How do I manage GLP-1 side effects?",
+    "When will I start seeing results?",
+  ],
+  general: [
+    "Give me a day-by-day protocol guide",
+    "What are the top 3 things to focus on first?",
+    "How long until I see results?",
+    "What are flexible alternatives to my protocol?",
+  ],
+};
+
+export function AIChatAssistant({
+  protocolData,
+  biomarkerData,
+  triggerContext,
+  onTriggerConsumed,
+}: AIChatAssistantProps) {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -38,11 +72,15 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
     {
       id: "welcome",
       role: "assistant",
-      content: "Hi! I'm your Health Optimization Assistant. Ask me anything about your biomarkers, protocols, or how to improve specific health markers.",
+      content:
+        "Hi! I'm your Health Optimization Assistant. Ask me anything about your biomarkers, protocols, or how to improve specific health markers.",
       timestamp: new Date(),
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestionType, setSuggestionType] = useState<string>("general");
+  const [hasUserSentMessage, setHasUserSentMessage] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -78,30 +116,67 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
     },
   });
 
+  // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
+  // Focus input when opened
   useEffect(() => {
     if (isOpen && !isMinimized && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen, isMinimized]);
 
-  const handleSend = () => {
-    if (!inputValue.trim() || chatMutation.isPending) return;
+  // Handle external trigger (peptide / GLP-1 section viewed)
+  useEffect(() => {
+    if (!triggerContext) return;
+
+    // Open chat
+    setIsOpen(true);
+    setIsMinimized(false);
+
+    // Inject proactive bot message
+    const proactiveMsg: Message = {
+      id: `trigger-${Date.now()}`,
+      role: "assistant",
+      content: triggerContext.proactiveMessage,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => {
+      // Avoid duplicate trigger messages
+      const alreadyHas = prev.some((m) => m.id.startsWith("trigger-"));
+      if (alreadyHas) return prev;
+      return [...prev, proactiveMsg];
+    });
+
+    // Show quick suggestion chips
+    setSuggestionType(triggerContext.type);
+    setShowSuggestions(true);
+    setHasUserSentMessage(false);
+
+    // Tell parent we consumed this trigger
+    onTriggerConsumed?.();
+  }, [triggerContext]);
+
+  const handleSend = (text?: string) => {
+    const msg = (text || inputValue).trim();
+    if (!msg || chatMutation.isPending) return;
+
+    setHasUserSentMessage(true);
+    setShowSuggestions(false);
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: inputValue,
+      content: msg,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    chatMutation.mutate(inputValue);
+    chatMutation.mutate(msg);
     setInputValue("");
   };
 
@@ -111,6 +186,9 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
       handleSend();
     }
   };
+
+  const suggestions =
+    QUICK_SUGGESTIONS[suggestionType] || QUICK_SUGGESTIONS.general;
 
   if (!isOpen) {
     return (
@@ -130,7 +208,7 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
       className={`fixed z-50 shadow-2xl transition-all duration-300 ${
         isMinimized
           ? "bottom-6 right-6 w-72 h-14"
-          : "bottom-6 right-6 w-96 h-[500px] max-h-[80vh]"
+          : "bottom-6 right-6 w-96 h-[560px] max-h-[85vh]"
       }`}
       data-testid="chat-container"
     >
@@ -195,8 +273,18 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
                   >
                     {message.isEmergency && (
                       <div className="flex items-center gap-2 mb-2 text-red-400 font-semibold">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                          />
                         </svg>
                         Emergency Safety Notice
                       </div>
@@ -223,6 +311,21 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
             </div>
           </ScrollArea>
 
+          {/* Quick suggestion chips — shown after trigger, hidden once user sends */}
+          {showSuggestions && !hasUserSentMessage && (
+            <div className="px-3 py-2 border-t border-border flex flex-wrap gap-1.5">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => handleSend(s)}
+                  className="text-xs px-2.5 py-1 rounded-full border border-brand-red/40 text-brand-red hover:bg-brand-red/10 transition-colors text-left"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="p-3 border-t border-border">
             <div className="flex gap-2">
               <Input
@@ -236,7 +339,7 @@ export function AIChatAssistant({ protocolData, biomarkerData }: AIChatAssistant
                 data-testid="input-chat-message"
               />
               <Button
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={!inputValue.trim() || chatMutation.isPending}
                 size="icon"
                 className="bg-brand-red hover:bg-brand-red/90"

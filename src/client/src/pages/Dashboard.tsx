@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { NotificationBell } from "@/components/NotificationBell";
-import { AIChatAssistant } from "@/components/AIChatAssistant";
+import { AIChatAssistant, type ChatTrigger } from "@/components/AIChatAssistant";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +17,7 @@ import {
 } from "@/components/DashboardCard";
 import { UploadDialog } from "@/components/UploadDialog";
 import { QuestionnaireDialog } from "@/components/QuestionnaireDialog";
+import { QuickTutorialDialog } from "@/components/QuickTutorialDialog";
 import { SocialShare } from "@/components/SocialShare";
 import { PrintableGuidelines } from "@/components/PrintableGuidelines";
 import { CycleOptimizer } from "@/components/CycleOptimizer";
@@ -54,6 +55,10 @@ import {
   Watch,
   Utensils,
   Handshake,
+  MessageCircle,
+  Mail,
+  CheckCircle2,
+  X,
 } from "lucide-react";
 import { ReportIssueDialog } from "@/components/ReportIssueDialog";
 import {
@@ -87,7 +92,34 @@ export default function Dashboard() {
   const [guidelinesDialogOpen, setGuidelinesDialogOpen] = useState(false);
   const [cycleOptimizerDialogOpen, setCycleOptimizerDialogOpen] = useState(false);
   const [reportIssueDialogOpen, setReportIssueDialogOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [chatTrigger, setChatTrigger] = useState<ChatTrigger | null>(null);
+  const [verifiedBanner, setVerifiedBanner] = useState<"success" | "error" | null>(null);
+  const [resendingVerification, setResendingVerification] = useState(false);
+  const [verificationResent, setVerificationResent] = useState(false);
+  const [showVerifyBlocker, setShowVerifyBlocker] = useState(false);
 
+  // Check for email verification callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const verified = params.get("verified");
+    if (verified === "true") {
+      setVerifiedBanner("success");
+      window.history.replaceState({}, "", window.location.pathname);
+    } else if (verified === "error") {
+      setVerifiedBanner("error");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  const handleResendVerification = async () => {
+    setResendingVerification(true);
+    try {
+      await apiRequest("POST", "/api/resend-verification");
+      setVerificationResent(true);
+    } catch {}
+    setResendingVerification(false);
+  };
 
   // Sync subscription status when returning from Stripe checkout
   useEffect(() => {
@@ -101,6 +133,12 @@ export default function Dashboard() {
           queryClient.invalidateQueries({ queryKey: ["/api/user"] });
         })
         .catch(console.error);
+      // Show quick tutorial for new subscribers
+      const hasSeenTutorial = localStorage.getItem("hu_tutorial_seen");
+      if (!hasSeenTutorial) {
+        localStorage.setItem("hu_tutorial_seen", "true");
+        setTimeout(() => setShowTutorial(true), 1200);
+      }
     }
   }, []);
 
@@ -152,6 +190,13 @@ export default function Dashboard() {
     },
   });
 
+  // Email verification grace period (24h from account creation)
+  const emailVerified = (user as any)?.emailVerified ?? false;
+  const accountCreatedAt = (user as any)?.createdAt ? new Date((user as any).createdAt) : new Date();
+  const graceExpired = Date.now() - accountCreatedAt.getTime() > 24 * 60 * 60 * 1000;
+  const showVerifyBanner = !emailVerified;
+  const verifyBlocks = !emailVerified && graceExpired;
+
   const isPremium = user?.subscriptionPlan === "premium_monthly" || user?.subscriptionPlan === "premium_annual";
   const isBasic = user?.subscriptionPlan === "basic";
   const isTrial = user?.subscriptionPlan === "trial";
@@ -170,6 +215,10 @@ export default function Dashboard() {
   const hasCompleteMetrics = userMetrics && userMetrics.fitnessGoal;
   
   const handleUploadClick = () => {
+    if (verifyBlocks) {
+      setShowVerifyBlocker(true);
+      return;
+    }
     if (!hasCompleteMetrics) {
       setQuestionnaireFromUpload(true);
       setQuestionnaireOpen(true);
@@ -246,10 +295,93 @@ export default function Dashboard() {
 
   return (
     <div className="h-full">
-      <OnboardingTour 
-        run={showOnboarding} 
-        onComplete={() => setShowOnboarding(false)} 
+      <OnboardingTour
+        run={showOnboarding}
+        onComplete={() => setShowOnboarding(false)}
       />
+      <QuickTutorialDialog
+        open={showTutorial}
+        onClose={() => setShowTutorial(false)}
+      />
+
+      {/* Email verification success/error flash */}
+      {verifiedBanner === "success" && (
+        <div className="bg-green-500/10 border-b border-green-500/20 px-4 py-2 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
+            <CheckCircle2 className="w-4 h-4" /> Email verified! Your account is fully activated.
+          </div>
+          <button onClick={() => setVerifiedBanner(null)}><X className="w-4 h-4 text-green-400/60" /></button>
+        </div>
+      )}
+      {verifiedBanner === "error" && (
+        <div className="bg-red-500/10 border-b border-red-500/20 px-4 py-2 flex items-center justify-between gap-3">
+          <span className="text-red-400 text-sm">Verification link is invalid or expired.</span>
+          <button onClick={() => setVerifiedBanner(null)}><X className="w-4 h-4 text-red-400/60" /></button>
+        </div>
+      )}
+
+      {/* Email verification banner */}
+      {showVerifyBanner && (
+        <div className={`border-b px-4 sm:px-6 lg:px-8 py-3 ${verifyBlocks ? "bg-red-500/10 border-red-500/20" : "bg-amber-500/10 border-amber-500/20"}`}>
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Mail className={`w-4 h-4 shrink-0 ${verifyBlocks ? "text-red-400" : "text-amber-400"}`} />
+              <p className="text-sm text-white/70">
+                {verifyBlocks
+                  ? <><strong className="text-red-300">Account suspended</strong> — verify your email to continue using Human Upgrade OS.</>
+                  : <><strong className="text-amber-300">Check your inbox</strong> — verify your email within 24 hours to keep access.</>
+                }
+              </p>
+            </div>
+            {verificationResent ? (
+              <span className="text-xs text-green-400">✓ Email sent!</span>
+            ) : (
+              <button
+                onClick={handleResendVerification}
+                disabled={resendingVerification}
+                className={`text-xs border rounded-full px-3 py-1 transition-colors ${verifyBlocks ? "text-red-400 border-red-400/30 hover:bg-red-400/10" : "text-amber-400 border-amber-400/30 hover:bg-amber-400/10"}`}
+              >
+                {resendingVerification ? "Sending..." : "Resend email"}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Action blocker modal for unverified users */}
+      {showVerifyBlocker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-[#111] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <div className="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-amber-400" />
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Activate your account</h2>
+            <p className="text-white/50 text-sm mb-6 leading-relaxed">
+              Please verify your email address before using this feature. Check your inbox for the activation link.
+            </p>
+            <div className="flex flex-col gap-2">
+              {verificationResent ? (
+                <span className="text-sm text-green-400">✓ Verification email sent!</span>
+              ) : (
+                <Button
+                  onClick={handleResendVerification}
+                  disabled={resendingVerification}
+                  className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-full"
+                >
+                  {resendingVerification ? "Sending..." : "Resend Activation Email"}
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                onClick={() => setShowVerifyBlocker(false)}
+                className="w-full text-white/40 hover:text-white/60"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isTrial && (
         <TrialBanner daysRemaining={trialDaysRemaining} onUpgrade={handleUpgrade} />
@@ -277,7 +409,10 @@ export default function Dashboard() {
               Upload
             </Button>
             <Button
-              onClick={() => generateMutation.mutate()}
+              onClick={() => {
+                if (verifyBlocks) { setShowVerifyBlocker(true); return; }
+                generateMutation.mutate();
+              }}
               disabled={generateMutation.isPending}
               size="sm"
               className="bg-brand-red hover:bg-brand-red/90 rounded-full"
@@ -297,10 +432,10 @@ export default function Dashboard() {
         ) : protocolLoading ? (
           <DashboardGridSkeleton />
         ) : (
-          <DashboardGrid 
-            protocol={protocol!} 
-            isPremium={isPremium} 
-            isTrial={isTrial} 
+          <DashboardGrid
+            protocol={protocol!}
+            isPremium={isPremium}
+            isTrial={isTrial}
             onUpgrade={handleUpgrade}
             guidelinesDialogOpen={guidelinesDialogOpen}
             setGuidelinesDialogOpen={setGuidelinesDialogOpen}
@@ -308,6 +443,7 @@ export default function Dashboard() {
             setCycleOptimizerDialogOpen={setCycleOptimizerDialogOpen}
             reportIssueDialogOpen={reportIssueDialogOpen}
             setReportIssueDialogOpen={setReportIssueDialogOpen}
+            onChatTrigger={setChatTrigger}
           />
         )}
       </main>
@@ -337,7 +473,11 @@ export default function Dashboard() {
         }}
       />
 
-      <AIChatAssistant protocolData={protocol} />
+      <AIChatAssistant
+        protocolData={protocol}
+        triggerContext={chatTrigger}
+        onTriggerConsumed={() => setChatTrigger(null)}
+      />
     </div>
   );
 }
@@ -565,6 +705,7 @@ function DashboardGrid({
   setCycleOptimizerDialogOpen,
   reportIssueDialogOpen,
   setReportIssueDialogOpen,
+  onChatTrigger,
 }: {
   protocol: Protocol;
   isPremium: boolean;
@@ -576,10 +717,74 @@ function DashboardGrid({
   setCycleOptimizerDialogOpen: (open: boolean) => void;
   reportIssueDialogOpen: boolean;
   setReportIssueDialogOpen: (open: boolean) => void;
+  onChatTrigger?: (ctx: ChatTrigger) => void;
 }) {
   const [, setLocation] = useLocation();
+  const peptideCardRef = useRef<HTMLDivElement>(null);
+  const glp1CardRef = useRef<HTMLDivElement>(null);
   const peptideReadiness = (protocol.peptideReadiness as any) || {};
   const hormoneStatus = (protocol.hormoneStatus as any) || {};
+
+  // Auto-pop chatbot when peptide section scrolls into view (once per session)
+  useEffect(() => {
+    if (!onChatTrigger || !isPremium) return;
+    const alreadyTriggered = sessionStorage.getItem("hu_peptide_chat_triggered");
+    if (alreadyTriggered) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          sessionStorage.setItem("hu_peptide_chat_triggered", "1");
+          observer.disconnect();
+          setTimeout(() => {
+            onChatTrigger({
+              type: "peptide",
+              proactiveMessage:
+                "👋 I see you're reviewing your Peptide & GLP-1 recommendations!\n\nDo you have any questions about your stack? I can give you:\n• A day-by-day application guide\n• A week-by-week dosing schedule\n• Flexible alternatives if needed\n• Tips on stacking safely\n\nJust tap one of the options below or ask me anything!",
+            });
+          }, 800);
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    if (peptideCardRef.current) {
+      observer.observe(peptideCardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [onChatTrigger, isPremium]);
+
+  // Auto-pop chatbot when GLP-1 card scrolls into view (once per session)
+  useEffect(() => {
+    if (!onChatTrigger || !isPremium) return;
+    const alreadyTriggered = sessionStorage.getItem("hu_glp1_chat_triggered");
+    if (alreadyTriggered) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          sessionStorage.setItem("hu_glp1_chat_triggered", "1");
+          observer.disconnect();
+          setTimeout(() => {
+            onChatTrigger({
+              type: "glp1",
+              proactiveMessage:
+                "💉 Your GLP-1 candidacy assessment is ready!\n\nGLP-1 receptor agonists (like semaglutide) can be powerful tools for metabolic optimization. I can help you with:\n• Understanding your candidacy score\n• A week-by-week titration guide\n• Diet & fasting protocols to stack with GLP-1\n• Managing common side effects\n• Monitoring markers to watch\n\nTap a suggestion below or ask me anything!",
+            });
+          }, 800);
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    if (glp1CardRef.current) {
+      observer.observe(glp1CardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [onChatTrigger, isPremium]);
+
   const metabolicStatus = (protocol.metabolicStatus as any) || {};
   const inflammation = (protocol.inflammation as any) || {};
   const morningRoutine = (protocol.morningRoutine as any[]) || [];
@@ -719,58 +924,154 @@ function DashboardGrid({
         </div>
       </DashboardCard>
 
-      <DashboardCard
-        title="Peptide Readiness"
-        icon={<Syringe className="w-5 h-5" />}
-        isPremium
-        isLocked={!isPremium || isLockedForTrial}
-        onUpgrade={onUpgrade}
-      >
-        <div className="space-y-1">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-muted-foreground">Readiness Score</span>
-            <StatusBadge status={peptideReadiness.status || "good"} />
+      <div ref={peptideCardRef}>
+        <DashboardCard
+          title="Peptide Readiness"
+          icon={<Syringe className="w-5 h-5" />}
+          isPremium
+          isLocked={!isPremium || isLockedForTrial}
+          onUpgrade={onUpgrade}
+        >
+          <div className="space-y-1">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-muted-foreground">Readiness Score</span>
+              <StatusBadge status={peptideReadiness.status || "good"} />
+            </div>
+            <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+              {(() => {
+                const normalizePeptide = (peptide: any) => {
+                  if (typeof peptide === 'boolean') return peptide;
+                  if (typeof peptide === 'object' && peptide !== null) return peptide.recommended;
+                  return false;
+                };
+                const peptides = [
+                  { label: "BPC-157", key: "bpc157" },
+                  { label: "TB-500", key: "tb500" },
+                  { label: "NAD+", key: "nadPlus" },
+                  { label: "MOTS-c", key: "motsc" },
+                  { label: "Sermorelin", key: "sermorelin" },
+                  { label: "Ipamorelin", key: "ipamorelin" },
+                  { label: "CJC-1295", key: "cjc1295" },
+                  { label: "Epithalon", key: "epithalon" },
+                  { label: "TA-1", key: "thymosinAlpha1" },
+                  { label: "SS-31", key: "ss31" },
+                ];
+                return peptides.map(({ label, key }) => {
+                  const isRecommended = normalizePeptide(peptideReadiness[key]);
+                  return (
+                    <MetricDisplay
+                      key={key}
+                      label={label}
+                      value={isRecommended ? "Yes" : "No"}
+                      status={isRecommended ? "good" : "neutral"}
+                    />
+                  );
+                });
+              })()}
+            </div>
+            <div className="mt-2 pt-2 border-t border-border">
+              <p className="text-xs text-muted-foreground">{peptideReadiness.ghStatus || "GH axis functioning normally"}</p>
+            </div>
+            {isPremium && !isLockedForTrial && onChatTrigger && (
+              <button
+                onClick={() =>
+                  onChatTrigger({
+                    type: "peptide",
+                    proactiveMessage:
+                      "👋 Questions about your Peptide & GLP-1 stack?\n\nI can help with:\n• Day-by-day application guide\n• Week-by-week dosing schedule\n• Safe stacking combinations\n• Flexible alternatives if you miss a dose\n\nTap a suggestion below or ask me anything!",
+                  })
+                }
+                className="mt-3 w-full text-xs text-brand-red border border-brand-red/30 rounded-lg py-1.5 hover:bg-brand-red/10 transition-colors flex items-center justify-center gap-1.5"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                Ask AI about your peptide stack →
+              </button>
+            )}
           </div>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-1">
-            {(() => {
-              // Helper function to normalize peptide data from both legacy (boolean) and new (object) formats
-              const normalizePeptide = (peptide: any) => {
-                if (typeof peptide === 'boolean') return peptide;
-                if (typeof peptide === 'object' && peptide !== null) return peptide.recommended;
-                return false;
-              };
-              
-              const peptides = [
-                { label: "BPC-157", key: "bpc157" },
-                { label: "TB-500", key: "tb500" },
-                { label: "NAD+", key: "nadPlus" },
-                { label: "MOTS-c", key: "motsc" },
-                { label: "Sermorelin", key: "sermorelin" },
-                { label: "Ipamorelin", key: "ipamorelin" },
-                { label: "CJC-1295", key: "cjc1295" },
-                { label: "Epithalon", key: "epithalon" },
-                { label: "TA-1", key: "thymosinAlpha1" },
-                { label: "SS-31", key: "ss31" },
-              ];
-              
-              return peptides.map(({ label, key }) => {
-                const isRecommended = normalizePeptide(peptideReadiness[key]);
-                return (
-                  <MetricDisplay 
-                    key={key}
-                    label={label} 
-                    value={isRecommended ? "Yes" : "No"} 
-                    status={isRecommended ? "good" : "neutral"} 
+        </DashboardCard>
+      </div>
+
+      <div ref={glp1CardRef}>
+        <DashboardCard
+          title="GLP-1 Candidacy"
+          icon={<Crosshair className="w-5 h-5" />}
+          isPremium
+          isLocked={!isPremium || isLockedForTrial}
+          onUpgrade={onUpgrade}
+        >
+          {(() => {
+            const glucose = metabolicStatus.glucose || 92;
+            const hba1c = metabolicStatus.hba1c || 5.2;
+            const homaIr = metabolicStatus.homaIr || 1.5;
+            const insulin = metabolicStatus.insulin || 6.8;
+
+            // Candidacy scoring
+            let score = 0;
+            if (homaIr > 2.5) score += 3;
+            else if (homaIr > 1.8) score += 2;
+            else if (homaIr > 1.3) score += 1;
+            if (hba1c > 5.7) score += 3;
+            else if (hba1c > 5.5) score += 2;
+            else if (hba1c > 5.3) score += 1;
+            if (glucose > 100) score += 2;
+            else if (glucose > 95) score += 1;
+            if (insulin > 10) score += 2;
+            else if (insulin > 7) score += 1;
+
+            const candidacy = score >= 6 ? "High" : score >= 3 ? "Moderate" : "Low";
+            const candidacyColor = candidacy === "High" ? "text-brand-red" : candidacy === "Moderate" ? "text-amber-400" : "text-emerald-400";
+            const candidacyStatus = candidacy === "High" ? "needs-attention" : candidacy === "Moderate" ? "warning" : "optimal";
+            const barWidth = score >= 6 ? 85 : score >= 3 ? 55 : 20;
+
+            return (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Candidacy Level</span>
+                  <span className={`text-sm font-bold ${candidacyColor}`}>{candidacy}</span>
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full transition-all ${
+                      candidacy === "High" ? "bg-brand-red" : candidacy === "Moderate" ? "bg-amber-400" : "bg-emerald-400"
+                    }`}
+                    style={{ width: `${barWidth}%` }}
                   />
-                );
-              });
-            })()}
-          </div>
-          <div className="mt-2 pt-2 border-t border-border">
-            <p className="text-xs text-muted-foreground">{peptideReadiness.ghStatus || "GH axis functioning normally"}</p>
-          </div>
-        </div>
-      </DashboardCard>
+                </div>
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-1">
+                  <MetricDisplay label="HOMA-IR" value={homaIr} status={homaIr > 2.5 ? "critical" : homaIr > 1.8 ? "needs-attention" : "good"} />
+                  <MetricDisplay label="HbA1c" value={`${hba1c}%`} status={hba1c > 5.7 ? "needs-attention" : "good"} />
+                  <MetricDisplay label="Fasting Glucose" value={glucose} unit="mg/dL" status={glucose > 100 ? "needs-attention" : "good"} />
+                  <MetricDisplay label="Insulin" value={insulin} unit="µIU/mL" status={insulin > 10 ? "needs-attention" : "good"} />
+                </div>
+                <div className="pt-2 border-t border-border">
+                  <p className="text-xs text-muted-foreground">
+                    {candidacy === "High"
+                      ? "Your metabolic markers suggest meaningful GLP-1 benefit. Discuss candidacy with your physician."
+                      : candidacy === "Moderate"
+                      ? "Mild insulin resistance detected. Lifestyle + GLP-1 may accelerate optimization."
+                      : "Excellent metabolic health. GLP-1 may still support longevity goals."}
+                  </p>
+                </div>
+                {isPremium && !isLockedForTrial && onChatTrigger && (
+                  <button
+                    onClick={() =>
+                      onChatTrigger({
+                        type: "glp1",
+                        proactiveMessage:
+                          "💉 Let's dive into your GLP-1 protocol!\n\nI can walk you through:\n• Week-by-week titration schedule\n• Diet & fasting protocols to stack\n• Managing nausea & side effects\n• Key biomarkers to monitor\n• Stacking with peptides safely\n\nWhat would you like to start with?",
+                      })
+                    }
+                    className="mt-1 w-full text-xs text-brand-red border border-brand-red/30 rounded-lg py-1.5 hover:bg-brand-red/10 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    Ask AI about GLP-1 protocol →
+                  </button>
+                )}
+              </div>
+            );
+          })()}
+        </DashboardCard>
+      </div>
 
       <DashboardCard
         title="Hormone Status"

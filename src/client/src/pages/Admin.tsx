@@ -52,6 +52,10 @@ import {
   BookOpen,
   TrendingUp,
   UserCheck,
+  DollarSign,
+  Target,
+  Zap,
+  RefreshCw,
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { FeedbackReport, BiomarkerDictionaryEntry } from "@shared/schema";
@@ -252,7 +256,50 @@ export default function Admin() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            {/* Top stats */}
+
+            {/* ── BETA LAUNCH BANNER ── */}
+            {metrics && (
+              <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Zap className="w-4 h-4 text-brand-red" />
+                      <span className="text-sm font-semibold text-brand-red">Beta Launch</span>
+                      <span className="text-xs text-muted-foreground">· First 50 users · $1/month</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-3xl font-bold text-white">
+                        {metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual}
+                        <span className="text-lg text-muted-foreground font-normal">/50</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">beta spots filled</div>
+                    </div>
+                    <div className="mt-2 w-64 bg-muted rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-brand-red transition-all"
+                        style={{ width: `${Math.min(100, ((metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual) / 50) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-400">
+                        ${(metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual) * 1}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Beta MRR</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-white">
+                        {50 - (metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Spots left</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── TOP STATS ── */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {metricsLoading ? (
                 [...Array(6)].map((_, i) => (
@@ -309,7 +356,7 @@ export default function Admin() {
               )}
             </div>
 
-            {/* Plan breakdown */}
+            {/* ── PLAN BREAKDOWN ── */}
             {metrics && (
               <Card>
                 <CardHeader>
@@ -321,8 +368,8 @@ export default function Admin() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {[
                       { label: "Trial", value: metrics.planBreakdown.trial, color: "text-yellow-500" },
-                      { label: "Basic", value: metrics.planBreakdown.basic, color: "text-blue-500" },
-                      { label: "Premium Monthly", value: metrics.planBreakdown.premium_monthly, color: "text-brand-red" },
+                      { label: "Free (Basic)", value: metrics.planBreakdown.basic, color: "text-blue-500" },
+                      { label: "Premium / Beta", value: metrics.planBreakdown.premium_monthly, color: "text-brand-red" },
                       { label: "Premium Annual", value: metrics.planBreakdown.premium_annual, color: "text-purple-500" },
                     ].map(({ label, value, color }) => (
                       <div key={label} className="text-center p-3 rounded-lg bg-muted/30 border border-border">

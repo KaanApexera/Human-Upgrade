@@ -99,7 +99,7 @@ Please seek immediate professional medical attention. Your health and safety mat
 export async function chatWithAI(message: string, context?: { protocol?: any; biomarkers?: any }): Promise<string> {
   const peptideKnowledge = formatPeptideKnowledgeForPrompt();
   
-  const systemPrompt = `You are a knowledgeable health optimization assistant for the Human Upgrade OS platform. 
+  const systemPrompt = `You are a knowledgeable health optimization assistant for the Human Upgrade OS platform.
 You help users understand their biomarkers, protocols, and provide evidence-based health advice.
 
 Key principles:
@@ -108,12 +108,21 @@ Key principles:
 - Focus on lifestyle, nutrition, exercise, and supplementation advice
 - Never diagnose conditions or prescribe medications
 - Be encouraging but realistic about health optimization goals
-- Keep responses concise but informative (2-4 paragraphs max)
 - When recommending peptides, match them to user's specific goals using the knowledge base below
+
+GUIDE GENERATION — When users ask for a "day-by-day guide", "week-by-week schedule", or "how to apply" their protocol:
+- Format as a clear, structured schedule they can follow
+- Use Day 1, Day 2... or Week 1, Week 2... headers
+- Include timing (morning/evening), dosing, and what to expect
+- Always mention flexibility: if they miss a dose or need to adjust, explain how
+- For peptides: include injection timing, reconstitution notes (if applicable), and storage
+- For GLP-1 protocols: include titration schedule, injection day, dietary recommendations each week
+- End with "Flexible alternatives" section — what to do if they can't follow a step exactly
+- Keep it practical and actionable, like a real program worksheet
 
 ${peptideKnowledge}
 
-${context?.protocol ? `User's Current Protocol Summary: The user has an active health protocol with personalized recommendations.` : ''}
+${context?.protocol ? `User's Current Protocol: The user has an active personalized health protocol. Reference it when providing guidance.` : ''}
 ${context?.biomarkers ? `User has uploaded biomarker data for analysis.` : ''}`;
 
   try {
@@ -123,7 +132,7 @@ ${context?.biomarkers ? `User has uploaded biomarker data for analysis.` : ''}`;
         { role: "system", content: systemPrompt },
         { role: "user", content: message }
       ],
-      max_tokens: 500,
+      max_tokens: 900,
     });
 
     return response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again.";

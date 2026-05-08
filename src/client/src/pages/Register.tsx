@@ -18,8 +18,12 @@ export default function Register() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      // New users get a trial, so go directly to dashboard
-      setLocation("/dashboard");
+      // If coming from a plan selection, redirect to pricing to complete checkout
+      if (planFromUrl) {
+        setLocation(`/pricing?plan=${planFromUrl}`);
+      } else {
+        setLocation("/dashboard");
+      }
     },
     onError: (err: any) => {
       setError(err.message || "Registration failed. Please try again.");
