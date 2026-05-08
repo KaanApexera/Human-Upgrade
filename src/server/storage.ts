@@ -49,7 +49,6 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByResetToken(token: string): Promise<User | undefined>;
-  getUserByVerificationToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, data: Partial<User>): Promise<User | undefined>;
   
@@ -130,7 +129,6 @@ export interface IStorage {
   
   // Admin
   promoteToAdmin(email: string): Promise<{ success: boolean; message: string }>;
-  verifyAllUsers(): Promise<void>;
   isAdmin(userId: string): Promise<boolean>;
   getUsageMetrics(): Promise<{
     totalUsers: number;
@@ -235,10 +233,6 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async getUserByVerificationToken(token: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
-    return user || undefined;
-  }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const hashedPassword = await bcrypt.hash(insertUser.password, 10);
@@ -631,10 +625,6 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBiomarkerDictionaryEntry(id: string): Promise<void> {
     await db.delete(biomarkerDictionary).where(eq(biomarkerDictionary.id, id));
-  }
-
-  async verifyAllUsers(): Promise<void> {
-    await db.update(users).set({ emailVerified: true });
   }
 
   async promoteToAdmin(email: string): Promise<{ success: boolean; message: string }> {

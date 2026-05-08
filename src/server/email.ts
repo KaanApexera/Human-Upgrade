@@ -89,42 +89,7 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
 }
 
 // ─────────────────────────────────────────────
-// 2. ACTIVATION EMAIL
-// ─────────────────────────────────────────────
-export async function sendActivationEmail(to: string, name: string, token: string): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
-  const activateUrl = `${APP_URL}/verify-email?token=${token}`;
-  const { error } = await getResend().emails.send({
-    from: FROM,
-    to,
-    subject: "Activate your Human Upgrade OS account ✅",
-    html: `
-      <div style="${BASE_STYLE}">
-        ${header()}
-        <div style="padding:32px;">
-          <div style="text-align:center;margin-bottom:24px;">
-            <div style="width:64px;height:64px;border-radius:50%;background:#DC2626/10;border:1px solid #DC2626/30;display:inline-flex;align-items:center;justify-content:center;font-size:28px;">✉️</div>
-          </div>
-          <h1 style="font-size:22px;font-weight:700;margin:0 0 8px;text-align:center;">Verify your email</h1>
-          <p style="color:#888;line-height:1.7;margin:0 0 28px;text-align:center;">
-            Hey ${name || "Optimizer"}, one click and you're in. Verify your email to unlock uploads, your Performance Age™, and your full protocol.
-          </p>
-          <div style="text-align:center;margin-bottom:28px;">
-            ${btn(activateUrl, "Activate My Account →")}
-          </div>
-          <p style="color:#444;font-size:12px;text-align:center;margin:0;">
-            This link expires in <strong style="color:#666;">24 hours</strong>. If you didn't create an account, ignore this email.
-          </p>
-        </div>
-        ${footer()}
-      </div>
-    `,
-  });
-  if (error) console.error("Activation email error:", error);
-}
-
-// ─────────────────────────────────────────────
-// 3. PASSWORD RESET EMAIL
+// 2. PASSWORD RESET EMAIL
 // ─────────────────────────────────────────────
 export async function sendPasswordResetEmail(to: string, token: string): Promise<void> {
   if (!process.env.RESEND_API_KEY) return;

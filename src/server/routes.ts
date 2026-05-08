@@ -37,7 +37,7 @@ import {
   calculateWearableInsights,
 } from "./wearables";
 import { generateDailyRoutine } from "./openai";
-import { sendWelcomeEmail, sendPasswordResetEmail, sendWinbackEmail, sendWeeklyReportEmail, sendActivationEmail } from "./email";
+import { sendWelcomeEmail, sendPasswordResetEmail, sendWinbackEmail, sendWeeklyReportEmail } from "./email";
 import { uploadToR2, isR2Configured } from "./r2";
 
 const ALLOWED_MIME_TYPES = [
@@ -117,17 +117,13 @@ export async function registerRoutes(app: Express): Promise<void> {
       const session = await storage.createSession(user.id);
       setSessionCookie(res, session.token);
 
-      // Generate email verification token and send emails (non-blocking)
-      const verificationToken = crypto.randomBytes(32).toString("hex");
-      await storage.updateUser(user.id, { emailVerificationToken: verificationToken });
-      sendActivationEmail(user.email, user.name || "", verificationToken).catch(() => {});
+      // Send welcome email (non-blocking)
       sendWelcomeEmail(user.email, user.name || "").catch(() => {});
 
       res.json({
         id: user.id,
         email: user.email,
         name: user.name,
-        emailVerified: false,
         subscriptionPlan: user.subscriptionPlan,
         subscriptionStatus: user.subscriptionStatus,
         trialStartDate: user.trialStartDate,
@@ -337,49 +333,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         trialStartDate: user.trialStartDate,
         trialEndsAt: user.trialEndsAt,
         hasUsedTrial: user.hasUsedTrial,
-        emailVerified: user.emailVerified ?? false,
         createdAt: user.createdAt,
       });
     }
   );
-
-  // Email verification
-  app.get("/api/verify-email", async (req: Request, res: Response) => {
-    try {
-      const { token } = req.query;
-      if (!token || typeof token !== "string") {
-        return res.redirect(`${process.env.APP_URL || "https://humanupgrade.app"}/dashboard?verified=error`);
-      }
-      const user = await storage.getUserByVerificationToken(token);
-      if (!user) {
-        return res.redirect(`${process.env.APP_URL || "https://humanupgrade.app"}/dashboard?verified=error`);
-      }
-      await storage.updateUser(user.id, {
-        emailVerified: true,
-        emailVerificationToken: null,
-      });
-      res.redirect(`${process.env.APP_URL || "https://humanupgrade.app"}/dashboard?verified=true`);
-    } catch (error) {
-      console.error("Email verification error:", error);
-      res.redirect(`${process.env.APP_URL || "https://humanupgrade.app"}/dashboard?verified=error`);
-    }
-  });
-
-  // Resend verification email
-  app.post("/api/resend-verification", authMiddleware, async (req: Request, res: Response) => {
-    try {
-      if (req.user!.emailVerified) {
-        return res.json({ success: true, message: "Already verified" });
-      }
-      const token = crypto.randomBytes(32).toString("hex");
-      await storage.updateUser(req.user!.id, { emailVerificationToken: token });
-      await sendActivationEmail(req.user!.email, req.user!.name || "", token);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Resend verification error:", error);
-      res.status(500).json({ message: "Failed to send verification email" });
-    }
-  });
 
   // Update user language preference
   app.patch(
@@ -1918,19 +1875,6 @@ export async function registerRoutes(app: Express): Promise<void> {
     } catch (error) {
       console.error("Weekly email blast error:", error);
       res.status(500).json({ message: "Failed to send weekly emails" });
-    }
-  });
-
-  // One-time: verify all existing users (admin only)
-  app.post("/api/admin/verify-all-users", authMiddleware, async (req: Request, res: Response) => {
-    try {
-      const isAdmin = await storage.isAdmin(req.user!.id);
-      if (!isAdmin) return res.status(403).json({ message: "Admin only" });
-      await storage.verifyAllUsers();
-      res.json({ success: true, message: "All existing users verified" });
-    } catch (error) {
-      console.error("Verify all error:", error);
-      res.status(500).json({ message: "Failed" });
     }
   });
 

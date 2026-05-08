@@ -36,8 +36,6 @@ export const users = pgTable("users", {
   googleId: text("google_id").unique(),
   passwordResetToken: text("password_reset_token"),
   passwordResetExpires: timestamp("password_reset_expires"),
-  emailVerified: boolean("email_verified").default(false),
-  emailVerificationToken: text("email_verification_token"),
   createdAt: timestamp("created_at").default(sql`now()`),
 });
 

@@ -56,7 +56,6 @@ import {
   Utensils,
   Handshake,
   MessageCircle,
-  Mail,
   CheckCircle2,
   X,
 } from "lucide-react";
@@ -94,32 +93,6 @@ export default function Dashboard() {
   const [reportIssueDialogOpen, setReportIssueDialogOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [chatTrigger, setChatTrigger] = useState<ChatTrigger | null>(null);
-  const [verifiedBanner, setVerifiedBanner] = useState<"success" | "error" | null>(null);
-  const [resendingVerification, setResendingVerification] = useState(false);
-  const [verificationResent, setVerificationResent] = useState(false);
-  const [showVerifyBlocker, setShowVerifyBlocker] = useState(false);
-
-  // Check for email verification callback
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const verified = params.get("verified");
-    if (verified === "true") {
-      setVerifiedBanner("success");
-      window.history.replaceState({}, "", window.location.pathname);
-    } else if (verified === "error") {
-      setVerifiedBanner("error");
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, []);
-
-  const handleResendVerification = async () => {
-    setResendingVerification(true);
-    try {
-      await apiRequest("POST", "/api/resend-verification");
-      setVerificationResent(true);
-    } catch {}
-    setResendingVerification(false);
-  };
 
   // Sync subscription status when returning from Stripe checkout
   useEffect(() => {
@@ -190,13 +163,6 @@ export default function Dashboard() {
     },
   });
 
-  // Email verification grace period (24h from account creation)
-  const emailVerified = (user as any)?.emailVerified ?? false;
-  const accountCreatedAt = (user as any)?.createdAt ? new Date((user as any).createdAt) : new Date();
-  const graceExpired = Date.now() - accountCreatedAt.getTime() > 24 * 60 * 60 * 1000;
-  const showVerifyBanner = !emailVerified;
-  const verifyBlocks = !emailVerified && graceExpired;
-
   const isPremium = user?.subscriptionPlan === "premium_monthly" || user?.subscriptionPlan === "premium_annual";
   const isBasic = user?.subscriptionPlan === "basic";
   const isTrial = user?.subscriptionPlan === "trial";
@@ -215,10 +181,6 @@ export default function Dashboard() {
   const hasCompleteMetrics = userMetrics && userMetrics.fitnessGoal;
   
   const handleUploadClick = () => {
-    if (verifyBlocks) {
-      setShowVerifyBlocker(true);
-      return;
-    }
     if (!hasCompleteMetrics) {
       setQuestionnaireFromUpload(true);
       setQuestionnaireOpen(true);
@@ -304,85 +266,6 @@ export default function Dashboard() {
         onClose={() => setShowTutorial(false)}
       />
 
-      {/* Email verification success/error flash */}
-      {verifiedBanner === "success" && (
-        <div className="bg-green-500/10 border-b border-green-500/20 px-4 py-2 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
-            <CheckCircle2 className="w-4 h-4" /> Email verified! Your account is fully activated.
-          </div>
-          <button onClick={() => setVerifiedBanner(null)}><X className="w-4 h-4 text-green-400/60" /></button>
-        </div>
-      )}
-      {verifiedBanner === "error" && (
-        <div className="bg-red-500/10 border-b border-red-500/20 px-4 py-2 flex items-center justify-between gap-3">
-          <span className="text-red-400 text-sm">Verification link is invalid or expired.</span>
-          <button onClick={() => setVerifiedBanner(null)}><X className="w-4 h-4 text-red-400/60" /></button>
-        </div>
-      )}
-
-      {/* Email verification banner */}
-      {showVerifyBanner && (
-        <div className={`border-b px-4 sm:px-6 lg:px-8 py-3 ${verifyBlocks ? "bg-red-500/10 border-red-500/20" : "bg-amber-500/10 border-amber-500/20"}`}>
-          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Mail className={`w-4 h-4 shrink-0 ${verifyBlocks ? "text-red-400" : "text-amber-400"}`} />
-              <p className="text-sm text-white/70">
-                {verifyBlocks
-                  ? <><strong className="text-red-300">Account suspended</strong> — verify your email to continue using Human Upgrade OS.</>
-                  : <><strong className="text-amber-300">Check your inbox</strong> — verify your email within 24 hours to keep access.</>
-                }
-              </p>
-            </div>
-            {verificationResent ? (
-              <span className="text-xs text-green-400">✓ Email sent!</span>
-            ) : (
-              <button
-                onClick={handleResendVerification}
-                disabled={resendingVerification}
-                className={`text-xs border rounded-full px-3 py-1 transition-colors ${verifyBlocks ? "text-red-400 border-red-400/30 hover:bg-red-400/10" : "text-amber-400 border-amber-400/30 hover:bg-amber-400/10"}`}
-              >
-                {resendingVerification ? "Sending..." : "Resend email"}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Action blocker modal for unverified users */}
-      {showVerifyBlocker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-[#111] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
-            <div className="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto mb-4">
-              <Mail className="w-8 h-8 text-amber-400" />
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">Activate your account</h2>
-            <p className="text-white/50 text-sm mb-6 leading-relaxed">
-              Please verify your email address before using this feature. Check your inbox for the activation link.
-            </p>
-            <div className="flex flex-col gap-2">
-              {verificationResent ? (
-                <span className="text-sm text-green-400">✓ Verification email sent!</span>
-              ) : (
-                <Button
-                  onClick={handleResendVerification}
-                  disabled={resendingVerification}
-                  className="w-full bg-amber-500 hover:bg-amber-400 text-black font-semibold rounded-full"
-                >
-                  {resendingVerification ? "Sending..." : "Resend Activation Email"}
-                </Button>
-              )}
-              <Button
-                variant="ghost"
-                onClick={() => setShowVerifyBlocker(false)}
-                className="w-full text-white/40 hover:text-white/60"
-              >
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {isTrial && (
         <TrialBanner daysRemaining={trialDaysRemaining} onUpgrade={handleUpgrade} />
       )}
@@ -410,7 +293,6 @@ export default function Dashboard() {
             </Button>
             <Button
               onClick={() => {
-                if (verifyBlocks) { setShowVerifyBlocker(true); return; }
                 generateMutation.mutate();
               }}
               disabled={generateMutation.isPending}
