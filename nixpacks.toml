@@ -1,8 +1,8 @@
 [phases.install]
-cmds = ["cd src && npm install"]
+cmds = ["cd src && npm install --include=dev"]
 
 [phases.build]
-cmds = ["cd src && npm run build"]
+cmds = ["cd src && npm install --include=dev && npm run build"]
 
 [start]
 cmd = "cd src && npm run start"
