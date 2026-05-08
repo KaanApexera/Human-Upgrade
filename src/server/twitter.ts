@@ -19,286 +19,242 @@ function getClient() {
 
 // 28 rotating tweets — 4/week = 7 weeks of unique content
 const TWEETS = [
-  // HOOK — Tiredness
-  `Most people accept being tired as "just how life is."
+  `You're not lazy.
+You're not weak.
+You're not "just getting older."
 
-It's not.
+Your biology is off — and your blood test proves it.
 
-Tiredness has a biological cause — and your blood test tells you exactly what it is.
+Upload yours free → humanupgrade.app`,
 
-Upload yours → humanupgrade.app`,
+  `The biohackers who look 10 years younger than their age all have one thing in common:
 
-  // STAT — Biological age
-  `Studies show your biological age can differ from your real age by up to 15 years.
+They don't guess their health. They measure it.
 
-Some 40-year-olds have the body of a 30-year-old.
-Some 30-year-olds have the body of a 45-year-old.
+Start measuring → humanupgrade.app`,
 
-Find out which one you are → humanupgrade.app`,
+  `Unpopular opinion:
 
-  // HOOK — Weight loss
-  `You're eating right. You're working out.
-The weight still won't move.
+Most people are walking around with fixable problems they don't know they have.
 
-This isn't willpower. It's biology.
+Low vitamin D. High cortisol. Insulin resistance.
 
-Your blood test shows exactly what's blocking your metabolism.
+All in your blood test. All fixable.
 
 humanupgrade.app`,
 
-  // EDUCATIONAL — What blood test reveals
-  `Your blood test tells you:
+  `Your body has been sending you signals for years.
 
-→ Why you're always tired
-→ Why you can't lose weight
-→ Why your mood crashes at 3pm
-→ Why you're aging faster than you should
+Tired after 8 hours of sleep.
+Can't lose weight no matter what.
+Brain fog by noon.
+Mood swings for no reason.
 
-Most doctors just say "everything's normal."
+These aren't random. They're data.
+
+humanupgrade.app`,
+
+  `What if looking and feeling 10 years younger was actually just a blood test away?
+
+Not hype. Not supplements.
+
+Just knowing what your body actually needs.
+
+humanupgrade.app`,
+
+  `"My doctor said everything was normal."
+
 Normal ≠ optimal.
 
-humanupgrade.app`,
+The range your lab uses includes the bottom 5% and top 5% of the population.
 
-  // HOOK — Aging
-  `In 90 days, you can look and feel 5-10 years younger.
-
-Not with skincare. Not with surgery.
-
-By fixing what's actually wrong inside — based on your own blood markers.
+You deserve better than "not sick."
 
 humanupgrade.app`,
 
-  // SOCIAL PROOF
-  `"My doctor said my results were normal. Human Upgrade showed me 6 things that were technically normal but nowhere near optimal. Game changer."
+  `The best version of you isn't a motivation problem.
 
-— David R., 41
+It's a biology problem.
 
-Your blood test is a goldmine. Are you reading it?
-
-humanupgrade.app`,
-
-  // EDUCATIONAL — Biological age
-  `Biological age is the age your body actually functions at — not your birthday.
-
-A 45-year-old can have a biological age of 33.
-A 30-year-old can have a biological age of 42.
-
-Which one are you?
-
-Find out free → humanupgrade.app`,
-
-  // HOOK — Energy
-  `The reason your energy crashes every afternoon isn't caffeine.
-
-It's not sleep either.
-
-It's usually cortisol, insulin, or thyroid — all visible in your blood test.
-
-Get your answer → humanupgrade.app`,
-
-  // EDUCATIONAL — What optimal means
-  `There's a difference between "normal" and "optimal."
-
-Normal: within the lab reference range (bottom 5% to top 5%)
-Optimal: where peak performers actually sit
-
-Your doctor checks for disease.
-We optimize for peak performance.
+And biology has data.
 
 humanupgrade.app`,
 
-  // HOOK — Testosterone
-  `Low testosterone symptoms:
+  `People spend $200/month on supplements they don't need.
+
+Meanwhile the answer is already in their blood test — sitting unread.
+
+humanupgrade.app — free analysis`,
+
+  `If you've ever felt like your body is working against you—
+
+It might literally be.
+
+High inflammation. Hormonal imbalance. Poor metabolic health.
+
+All detectable. All reversible.
+
+humanupgrade.app`,
+
+  `Biohacking isn't just for billionaires anymore.
+
+Upload your blood test.
+Get your biological age.
+Get your exact protocol.
+
+Free to start → humanupgrade.app`,
+
+  `There are two types of people in 2025:
+
+Those who guess their health.
+Those who know it.
+
+The second group ages slower, thinks clearer, performs better.
+
+humanupgrade.app`,
+
+  `You don't need a $10,000 health retreat.
+
+You need to actually read what your blood test is telling you.
+
+We do that for you. Free.
+
+humanupgrade.app`,
+
+  `Longevity isn't luck.
+
+It's low inflammation.
+Optimized hormones.
+Stable blood sugar.
+Tracked biological age.
+
+Everything measurable. Everything improvable.
+
+humanupgrade.app`,
+
+  `Most 35-year-olds have the biology of a 45-year-old.
+
+Some 45-year-olds have the biology of a 32-year-old.
+
+The difference? They actually looked at their data.
+
+humanupgrade.app`,
+
+  `Your morning coffee isn't the problem.
+
+Your cortisol is.
+
+And it's been showing up in your blood test this whole time.
+
+humanupgrade.app`,
+
+  `If you're training hard and not seeing results—
+
+Your blood work is the missing piece.
+
+Testosterone. IGF-1. Vitamin D. Cortisol.
+
+These 4 markers explain 90% of plateaus.
+
+humanupgrade.app`,
+
+  `The best investment you can make in 2025:
+
+Understanding your own biology.
+
+Not a gym membership.
+Not another supplement.
+
+Your data. Your protocol.
+
+humanupgrade.app`,
+
+  `"I just thought I was tired because I was busy."
+
+No. You were tired because your ferritin was at 12 and your thyroid was struggling.
+
+Your blood test knew. You didn't.
+
+humanupgrade.app`,
+
+  `Peak performance isn't a mindset.
+
+It's a metabolic state.
+
+And it starts with knowing where you actually are.
+
+Free blood test analysis → humanupgrade.app`,
+
+  `What aging fast actually looks like:
+
 → Always tired
-→ Hard to build muscle
-→ Low motivation
+→ Can't build muscle
 → Brain fog
-→ Poor sleep
+→ Weight gain without eating more
+→ Mood that's "just off"
 
-Sound familiar? Your blood test will confirm it — and we'll tell you exactly how to fix it.
-
-humanupgrade.app`,
-
-  // EDUCATIONAL — How it works
-  `How to decode your blood test in 3 steps:
-
-1️⃣ Upload your PDF (any standard test)
-2️⃣ Get your biological age score
-3️⃣ Get your exact protocol — supplements, sleep, nutrition
-
-Takes 60 seconds. Free to start.
+None of this is inevitable.
 
 humanupgrade.app`,
 
-  // HOOK — Inflammation
-  `Chronic inflammation is the silent driver of:
-→ Early aging
-→ Brain fog
-→ Joint pain
-→ Fatigue
-→ Weight gain
+  `Bryan Johnson spends $2M/year optimizing his biology.
 
-It shows up clearly in your blood test.
-Most people have it and have no idea.
+You can start for $0.
 
-humanupgrade.app`,
+Upload your blood test → humanupgrade.app`,
 
-  // STAT — Longevity
-  `The top 1% don't guess their health.
+  `The supplement industry makes $50B/year selling you things you might not need.
 
-They track biomarkers. They optimize protocols. They measure their biological age.
+Your blood test shows exactly what you're missing.
 
-Now you can do the same — starting with your next blood test.
+Stop guessing. Start knowing.
 
 humanupgrade.app`,
 
-  // HOOK — Sleep
-  `Bad sleep isn't random.
+  `Most people find out something is wrong when it becomes a disease.
 
-It's usually low magnesium, high cortisol, or poor melatonin regulation — all traceable in your blood.
+Your blood markers show the warning signs 5-10 years earlier.
 
-Fix the root cause, not the symptom.
-
-humanupgrade.app`,
-
-  // EDUCATIONAL — Free tier
-  `Most health optimization tools cost $300+/month.
-
-We started free.
-
-Upload your blood test, get your biological age, get your protocol.
-
-No credit card. No catch.
+Don't wait.
 
 humanupgrade.app`,
 
-  // HOOK — Doctor comparison
-  `Your doctor has 7 minutes per appointment.
+  `Upgrade your biology in 3 steps:
 
-They check if you're sick — not if you're optimal.
+1. Upload your blood test (60 seconds)
+2. See your biological age score
+3. Get your personalized protocol
 
-There's a big difference between "not sick" and "performing at your best."
+Free to start → humanupgrade.app`,
 
-humanupgrade.app`,
+  `You've been told to eat well, sleep more, and exercise.
 
-  // EDUCATIONAL — Supplements
-  `The supplement industry wants you to buy everything.
+But nobody told you WHY it's not working for you specifically.
 
-Your body only needs what your blood test shows it's missing.
-
-Stop guessing. Start targeting.
+Your biology has the answer.
 
 humanupgrade.app`,
 
-  // HOOK — Longevity
-  `Bryan Johnson spends $2M/year to reverse his biological age.
+  `Belly fat that won't move.
+Poor sleep despite being exhausted.
+Anxiety for no reason.
+Craving sugar all day.
 
-You don't need $2M.
-
-You need your blood test results and the right protocol.
-
-Start free → humanupgrade.app`,
-
-  // EDUCATIONAL — Hormones
-  `Hormones affect everything:
-→ Energy
-→ Body composition
-→ Mood
-→ Sleep quality
-→ Libido
-→ Mental clarity
-
-They're all measurable. They're all optimizable.
+This is high cortisol. It's in your blood test.
 
 humanupgrade.app`,
 
-  // HOOK — Generic health advice
-  `"Eat well. Exercise. Sleep 8 hours."
+  `The people who look incredible in their 40s and 50s aren't just lucky.
 
-Everyone knows this. Nobody tells you *why* it's not working for you specifically.
+They optimized early. They measured consistently. They acted on data.
 
-Your blood test does.
+You can too → humanupgrade.app`,
 
-humanupgrade.app`,
+  `Your blood test is either sitting in a drawer or one click away right now.
 
-  // STAT — Early detection
-  `Most chronic diseases show warning signs in blood markers 5-10 years before symptoms appear.
+In 60 seconds you'll know your biological age and exactly what to fix.
 
-Your last blood test might already be telling you something important.
-
-humanupgrade.app`,
-
-  // HOOK — Muscle building
-  `Struggling to build muscle despite training hard?
-
-Check your testosterone, IGF-1, and vitamin D.
-
-These 3 markers alone explain most plateaus.
-
-humanupgrade.app`,
-
-  // EDUCATIONAL — What we analyze
-  `What we analyze in your blood test:
-
-🔴 Inflammation (CRP, IL-6)
-🟡 Hormones (testosterone, cortisol, thyroid)
-🔵 Metabolic (glucose, insulin, HbA1c)
-⚪ Vitamins & minerals (D3, B12, magnesium, zinc)
-🟢 Cardiovascular (lipids, homocysteine)
-
-humanupgrade.app`,
-
-  // HOOK — Anti-aging
-  `Anti-aging isn't about creams.
-
-It's about:
-→ Keeping inflammation low
-→ Optimizing hormones
-→ Protecting metabolic health
-→ Tracking biological age
-
-All measurable. All fixable.
-
-humanupgrade.app`,
-
-  // SOCIAL PROOF 2
-  `"Lost 18 lbs in 8 weeks. Turns out my insulin resistance was the real problem — not my diet."
-
-— Sarah K., 29
-
-Find your real blocker → humanupgrade.app`,
-
-  // EDUCATIONAL — Cortisol
-  `High cortisol is the #1 reason for:
-→ Belly fat that won't move
-→ Poor sleep despite exhaustion
-→ Anxiety without reason
-→ Craving sugar and carbs
-
-It's measurable. It's fixable.
-
-humanupgrade.app`,
-
-  // HOOK — Beta offer
-  `For our first 50 beta users:
-
-Full Pro access for $1/month.
-
-Blood test analysis + biological age + full protocol + weekly reports.
-
-Normally $29/month.
-
-→ humanupgrade.app`,
-
-  // CLOSING — CTA
-  `Your blood test is either sitting in a drawer or accessible online right now.
-
-In 60 seconds you could know:
-✓ Your biological age
-✓ What's slowing you down
-✓ Exactly how to fix it
-
-humanupgrade.app — free to start`,
+Free → humanupgrade.app`,
 ];
 
 // Track last posted index in memory (resets on restart, good enough for weekly cadence)
