@@ -2,6 +2,12 @@ import { TwitterApi } from "twitter-api-v2";
 
 function getClient() {
   const { TWITTER_API_KEY, TWITTER_API_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET } = process.env;
+  console.log("🐦 Twitter creds check:", {
+    apiKey: TWITTER_API_KEY ? `${TWITTER_API_KEY.slice(0,4)}...${TWITTER_API_KEY.slice(-4)}` : "MISSING",
+    apiSecret: TWITTER_API_SECRET ? `${TWITTER_API_SECRET.slice(0,4)}...${TWITTER_API_SECRET.slice(-4)}` : "MISSING",
+    accessToken: TWITTER_ACCESS_TOKEN ? `${TWITTER_ACCESS_TOKEN.slice(0,8)}...${TWITTER_ACCESS_TOKEN.slice(-4)}` : "MISSING",
+    accessSecret: TWITTER_ACCESS_SECRET ? `${TWITTER_ACCESS_SECRET.slice(0,4)}...${TWITTER_ACCESS_SECRET.slice(-4)}` : "MISSING",
+  });
   if (!TWITTER_API_KEY || !TWITTER_API_SECRET || !TWITTER_ACCESS_TOKEN || !TWITTER_ACCESS_SECRET) return null;
   return new TwitterApi({
     appKey: TWITTER_API_KEY,
