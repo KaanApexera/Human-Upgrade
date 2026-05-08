@@ -33,6 +33,7 @@ import Reminders from "@/pages/Reminders";
 import WeeklyReport from "@/pages/WeeklyReport";
 import GLP1Insights from "@/pages/GLP1Insights";
 import ResetPassword from "@/pages/ResetPassword";
+import LandingBiologicalAge from "@/pages/LandingBiologicalAge";
 import NotFound from "@/pages/not-found";
 import type { User } from "@shared/schema";
 
@@ -92,6 +93,7 @@ function Router() {
       <Route path="/reminders" component={() => <ProtectedRoute component={Reminders} />} />
       <Route path="/reports/:id" component={() => <ProtectedRoute component={WeeklyReport} />} />
       <Route path="/glp1" component={() => <ProtectedRoute component={GLP1Insights} />} />
+      <Route path="/biological-age" component={LandingBiologicalAge} />
       <Route component={NotFound} />
     </Switch>
   );
