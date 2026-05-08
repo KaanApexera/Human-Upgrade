@@ -20,23 +20,22 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
     </div>
   );
 }
+
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@shared/schema";
-import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import {
-  Activity,
   ChevronRight,
-  Shield,
-  Flame,
   Check,
   Star,
   Zap,
   ArrowDown,
-  Dna,
-  Heart,
-  BarChart3,
-  Upload,
+  Battery,
+  Brain,
+  Flame,
+  Moon,
+  TrendingDown,
+  Clock,
 } from "lucide-react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
 
@@ -51,7 +50,6 @@ const LIFESTYLE_IMAGE =
 
 export default function Landing() {
   const [, setLocation] = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const { data: user, isLoading } = useQuery<User>({ queryKey: ["/api/user"] });
 
@@ -84,19 +82,12 @@ export default function Landing() {
 
       {/* ── HERO ── */}
       <section className="relative h-screen min-h-[600px] flex items-end pb-20">
-        {/* Background image */}
         <div className="absolute inset-0">
-          <img
-            src={HERO_IMAGE}
-            alt="Elite athlete"
-            className="w-full h-full object-cover object-top"
-          />
-          {/* gradient overlays */}
+          <img src={HERO_IMAGE} alt="Peak performance" className="w-full h-full object-cover object-top" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/60 to-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/70 via-transparent to-transparent" />
         </div>
 
-        {/* Hero content */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
           <div className="max-w-2xl">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
@@ -111,19 +102,20 @@ export default function Landing() {
                 onClick={() => setLocation("/register?plan=beta_monthly")}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white/70 backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer"
               >
-                <Dna className="w-3.5 h-3.5 text-red-400" />
-                Full Pro Access · $1/month
+                Full Access · $1/month
               </button>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-              Know Your Body.
+              Look younger.
               <br />
-              <span className="text-red-500">Outlive Everyone.</span>
+              Feel unstoppable.
+              <br />
+              <span className="text-red-500">Be your best.</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-white/60 max-w-xl leading-relaxed mb-10">
-              Upload your blood work. Get a complete biological age score, personalized protocols, and the exact steps to optimize your performance.
+              Upload your blood test. In 60 seconds, discover exactly why you're tired, gaining weight, or aging faster than you should — and get the precise plan to fix it.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -131,13 +123,11 @@ export default function Landing() {
                 onClick={() => setLocation("/register")}
                 className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-8 py-4 rounded-full text-base transition-all duration-200 shadow-[0_0_30px_rgba(220,38,38,0.3)]"
               >
-                Start Your Upgrade
+                Start for Free
                 <ChevronRight className="w-5 h-5" />
               </button>
               <button
-                onClick={() => {
-                  document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
-                }}
+                onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
                 className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-medium px-8 py-4 rounded-full text-base transition-all duration-200 backdrop-blur-sm"
               >
                 See how it works
@@ -147,59 +137,67 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
           <div className="w-px h-12 bg-gradient-to-b from-white to-transparent animate-pulse" />
         </div>
       </section>
 
-      {/* ── SOCIAL PROOF BAR ── */}
-      <section className="border-y border-white/[0.06] py-5 bg-white/[0.015]">
-        <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-center gap-8 text-white/40 text-sm">
-          {[
-            { icon: Shield, text: "Science-backed protocols" },
-            { icon: Activity, text: "50+ biomarkers analyzed" },
-            { icon: Flame, text: "Built for peak performance" },
-            { icon: Heart, text: "Personalized to your blood" },
-          ].map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-2">
-              <Icon className="w-4 h-4 text-red-500" />
-              <span>{text}</span>
-            </div>
-          ))}
+      {/* ── PAIN POINTS ── */}
+      <section className="border-y border-white/[0.06] py-14 bg-white/[0.015]">
+        <div className="max-w-5xl mx-auto px-6">
+          <p className="text-center text-white/40 text-sm mb-8 uppercase tracking-widest font-semibold">Sound familiar?</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { icon: Battery, text: "Always tired, even after sleep" },
+              { icon: TrendingDown, text: "Can't lose weight no matter what" },
+              { icon: Brain, text: "Brain fog and lack of focus" },
+              { icon: Flame, text: "Low motivation and energy" },
+              { icon: Moon, text: "Poor sleep quality" },
+              { icon: Clock, text: "Feeling older than your age" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+                <Icon className="w-4 h-4 text-red-500 flex-shrink-0" />
+                <span className="text-white/50 text-sm">{text}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-white/60 text-base mt-8">
+            These aren't signs of getting old — they're signs your body is <span className="text-white font-semibold">sending you data</span>. We decode it.
+          </p>
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="py-28 max-w-7xl mx-auto px-6">
         <div className="text-center mb-20">
-          <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">The Process</p>
+          <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">How It Works</p>
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            Three steps to your
+            From blood test to
             <br />
-            <span className="text-white/50">best self</span>
+            <span className="text-white/50">transformation plan</span>
           </h2>
+          <p className="text-white/40 mt-4 text-lg max-w-xl mx-auto">No doctor appointments. No expensive labs. Just upload what you already have.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
               step: "01",
-              icon: Upload,
-              title: "Upload Your Labs",
-              desc: "Drop your blood test PDF. Our AI reads every marker — testosterone, glucose, thyroid, inflammation — in seconds.",
+              emoji: "📋",
+              title: "Upload Your Blood Test",
+              desc: "Take a photo or upload the PDF from your last checkup. Any standard blood test works — from your doctor, a pharmacy, or a home test kit.",
             },
             {
               step: "02",
-              icon: BarChart3,
-              title: "Get Your Score",
-              desc: "Receive your Performance Age score and a full biomarker breakdown showing exactly what's optimal and what needs work.",
+              emoji: "🧬",
+              title: "Get Your Biological Age",
+              desc: "Our AI analyzes your results and tells you your real biological age — how old your body actually is on the inside. Most people are surprised.",
             },
             {
               step: "03",
-              icon: Zap,
-              title: "Execute the Protocol",
-              desc: "Get your personalized supplement stack, peptide protocol, meal plan, and daily routine — built for your specific biology.",
+              emoji: "🚀",
+              title: "Follow Your Personal Plan",
+              desc: "Get your exact daily protocol — what to eat, what supplements to take, how to sleep better, and how to boost your energy — all based on your unique biology.",
             },
           ].map((item) => (
             <div
@@ -207,9 +205,7 @@ export default function Landing() {
               className="relative p-8 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300 group"
             >
               <div className="text-6xl font-bold text-white/[0.04] absolute top-6 right-6 font-mono">{item.step}</div>
-              <div className="p-3 rounded-xl bg-red-600/10 border border-red-500/20 w-fit mb-6">
-                <item.icon className="w-6 h-6 text-red-400" />
-              </div>
+              <div className="text-4xl mb-6">{item.emoji}</div>
               <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
               <p className="text-white/50 leading-relaxed text-sm">{item.desc}</p>
             </div>
@@ -217,50 +213,43 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── SPLIT IMAGE + FEATURES ── */}
+      {/* ── BENEFITS SPLIT ── */}
       <section className="py-20 border-t border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Image */}
-            <div className="relative rounded-2xl overflow-hidden h-[500px] lg:h-[600px] order-2 lg:order-1">
-              <img
-                src={SPLIT_IMAGE}
-                alt="Blood work analysis"
-                className="w-full h-full object-cover"
-              />
+            <div className="relative rounded-2xl overflow-hidden h-[500px] lg:h-[600px]">
+              <img src={SPLIT_IMAGE} alt="Transformation" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/80 via-transparent to-transparent" />
-              {/* floating card */}
               <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl bg-black/70 border border-white/10 backdrop-blur-sm">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-white/50 text-xs uppercase tracking-wide">Performance Age</p>
-                  <span className="text-green-400 text-xs font-medium">↓ 8 years</span>
+                  <p className="text-white/50 text-xs uppercase tracking-wide">Biological Age</p>
+                  <span className="text-green-400 text-xs font-medium">8 years younger</span>
                 </div>
                 <div className="text-5xl font-bold text-red-500 mb-1">32</div>
-                <p className="text-white/40 text-xs">Chronological age: 40 · Biological age: 32</p>
+                <p className="text-white/40 text-xs">Actual age: 40 · Body age: 32</p>
                 <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
                   <div className="h-full w-[80%] rounded-full bg-gradient-to-r from-red-600 to-red-400" />
                 </div>
               </div>
             </div>
 
-            {/* Features */}
-            <div className="order-1 lg:order-2">
-              <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">What You Get</p>
+            <div>
+              <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">What You'll Discover</p>
               <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-                Your biology,
-                <br />decoded.
+                Your body knows
+                <br />the answers.
               </h2>
               <p className="text-white/50 text-lg leading-relaxed mb-10">
-                We analyze your labs with the same depth as a top longevity clinic — and turn the data into an executable plan.
+                Stop guessing. Your blood test contains everything — why you're tired, why you can't lose weight, why you're aging faster. We read it all and give you the exact fix.
               </p>
               <div className="space-y-4">
                 {[
-                  "Biological age calculation from 50+ biomarkers",
-                  "Personalized peptide & GLP-1 protocol",
-                  "Hormone optimization roadmap",
-                  "AI-generated supplement stack",
-                  "Custom meal plan for your metabolism",
-                  "Wearable device integration (Oura, WHOOP)",
+                  "Why your energy crashes every afternoon",
+                  "The real reason the weight won't come off",
+                  "Why your sleep never feels restorative",
+                  "What's making you age faster than your peers",
+                  "The exact supplements your body actually needs",
+                  "How to feel 10 years younger in 90 days",
                 ].map((feat) => (
                   <div key={feat} className="flex items-center gap-3 text-white/70">
                     <div className="w-5 h-5 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center flex-shrink-0">
@@ -274,7 +263,7 @@ export default function Landing() {
                 onClick={() => setLocation("/register")}
                 className="mt-10 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-7 py-3.5 rounded-full text-sm transition-all duration-200"
               >
-                Analyze My Bloodwork
+                Discover My Results
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -287,20 +276,21 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">Daily Protocol</p>
+              <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">Your Daily Plan</p>
               <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-                Live like the
-                <br />top 1%.
+                Not a generic plan.
+                <br />
+                <span className="text-white/50">Yours. Only yours.</span>
               </h2>
               <p className="text-white/50 text-lg leading-relaxed mb-10">
-                Elite performers don't guess. They optimize based on data. Get the exact morning routine, sleep protocol, and recovery stack your biomarkers demand.
+                Every plan is built from your actual blood values — not an average. What works for someone else may actively harm you. We give you exactly what your body needs.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { label: "Morning", value: "Sunlight → Cold → Supplements" },
-                  { label: "Training", value: "Based on HRV & recovery" },
-                  { label: "Nutrition", value: "Macro targets from labs" },
-                  { label: "Sleep", value: "Optimized for your cortisol" },
+                  { label: "Energy", value: "Fix your morning crash for good" },
+                  { label: "Weight", value: "Target the real metabolic blocker" },
+                  { label: "Sleep", value: "Deep sleep protocol from your data" },
+                  { label: "Aging", value: "Slow it down, measurably" },
                 ].map((item) => (
                   <div key={item.label} className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02]">
                     <p className="text-red-400 text-xs font-semibold uppercase tracking-wide mb-1">{item.label}</p>
@@ -310,11 +300,7 @@ export default function Landing() {
               </div>
             </div>
             <div className="relative rounded-2xl overflow-hidden h-[500px]">
-              <img
-                src={LIFESTYLE_IMAGE}
-                alt="Peak performance lifestyle"
-                className="w-full h-full object-cover"
-              />
+              <img src={LIFESTYLE_IMAGE} alt="Optimal lifestyle" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/60 via-transparent to-transparent" />
             </div>
           </div>
@@ -325,31 +311,28 @@ export default function Landing() {
       <section className="py-20 border-t border-white/[0.06]">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-14">
-            <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">Results</p>
-            <h2 className="text-4xl font-bold tracking-tight">Real people. Real data.</h2>
+            <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">Real Results</p>
+            <h2 className="text-4xl font-bold tracking-tight">People just like you.</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                quote: "My testosterone went from 420 to 780 ng/dL in 3 months following the protocol. No guesswork.",
+                quote: "I've been 'tired all the time' for years. Turns out my testosterone and iron were both low. The plan fixed both in 6 weeks. I feel 10 years younger.",
                 name: "Marcus T.",
-                role: "Competitive athlete, 34",
+                role: "34 years old, father of 2",
               },
               {
-                quote: "Lost 18 lbs in 8 weeks on the GLP-1 stack while keeping muscle. The peptide combos are next level.",
+                quote: "I was doing everything right — diet, exercise — but couldn't lose weight. My insulin resistance was the problem. Once I targeted that, 18 lbs in 8 weeks.",
                 name: "Sarah K.",
-                role: "Fitness coach, 29",
+                role: "29 years old, fitness coach",
               },
               {
-                quote: "My functional doctor was impressed by the depth of analysis. Better than a $500 consultation.",
+                quote: "My doctor just said everything was 'normal'. Human Upgrade showed me 6 things that were technically normal but far from optimal. Game changer.",
                 name: "David R.",
-                role: "Longevity enthusiast, 41",
+                role: "41 years old, entrepreneur",
               },
             ].map((t, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02]"
-              >
+              <div key={i} className="p-6 rounded-2xl border border-white/[0.08] bg-white/[0.02]">
                 <div className="flex gap-0.5 mb-4">
                   {[...Array(5)].map((_, s) => (
                     <Star key={s} className="w-4 h-4 fill-amber-400 text-amber-400" />
@@ -371,15 +354,21 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="text-red-500 text-sm font-semibold uppercase tracking-widest mb-4">Pricing</p>
-            <h2 className="text-4xl font-bold tracking-tight">Start free. Go deeper when ready.</h2>
+            <h2 className="text-4xl font-bold tracking-tight">Start free. No catch.</h2>
+            <p className="text-white/40 mt-3">Most people see results with just their first upload.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-8 rounded-2xl border border-white/[0.08] bg-white/[0.02]">
               <p className="text-white/40 text-xs font-semibold uppercase tracking-widest mb-3">Free</p>
               <div className="text-4xl font-bold mb-1">$0</div>
-              <p className="text-white/30 text-sm mb-8">No credit card needed</p>
+              <p className="text-white/30 text-sm mb-8">No credit card. No tricks.</p>
               <ul className="space-y-3 mb-8">
-                {["1 lab upload per month", "Biomarker extraction", "Basic protocol", "Performance Age™ score"].map((f) => (
+                {[
+                  "1 blood test analysis per month",
+                  "Full biomarker breakdown",
+                  "Biological age score",
+                  "Basic optimization plan",
+                ].map((f) => (
                   <li key={f} className="flex items-center gap-3 text-white/50 text-sm">
                     <Check className="w-4 h-4 text-white/20 flex-shrink-0" />{f}
                   </li>
@@ -403,11 +392,11 @@ export default function Landing() {
               <p className="text-white/30 text-sm mb-8">Or $199/year — save 43%</p>
               <ul className="space-y-3 mb-8">
                 {[
-                  "Unlimited lab uploads",
-                  "Oura & WHOOP sync",
-                  "AI meal plan generator",
-                  "Peptide & GLP-1 protocols",
-                  "Weekly upgrade report",
+                  "Unlimited blood test uploads",
+                  "Advanced aging reversal protocol",
+                  "Weight loss & metabolism plan",
+                  "Hormone optimization roadmap",
+                  "Weekly progress report",
                   "Priority support",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-3 text-white/80 text-sm">
@@ -432,20 +421,21 @@ export default function Landing() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.08)_0%,transparent_70%)]" />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-            Your biology is
-            <br />speaking. Are you listening?
+            You already have
+            <br />the answers.
           </h2>
-          <p className="text-white/40 text-lg mb-10">
-            Upload your labs today. See your Performance Age in under 60 seconds.
+          <p className="text-white/40 text-lg mb-4">
+            Your last blood test is sitting in a drawer somewhere. Upload it now and find out what it's been trying to tell you.
           </p>
+          <p className="text-white/60 text-base mb-10 font-medium">Takes 60 seconds. Completely free.</p>
           <button
             onClick={() => setLocation("/register")}
             className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-10 py-4 rounded-full text-base transition-all duration-200 shadow-[0_0_40px_rgba(220,38,38,0.25)]"
           >
-            Start Your Upgrade — It's Free
+            Upload My Blood Test — Free
             <ChevronRight className="w-5 h-5" />
           </button>
-          <p className="text-white/20 text-sm mt-4">No credit card required</p>
+          <p className="text-white/20 text-sm mt-4">No credit card required · Results in 60 seconds</p>
         </div>
       </section>
 
@@ -454,35 +444,34 @@ export default function Landing() {
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-red-500 mb-3 block">FAQ</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">Frequently Asked Questions</h2>
-            <p className="text-white/40 mt-3 text-base">Everything you need to know about optimizing your biology</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white">Questions we get a lot</h2>
           </div>
 
           <div className="space-y-4">
             {[
               {
-                q: "What is biological age and how is it calculated?",
-                a: "Biological age measures how old your body actually functions at a cellular level — independent of your birth date. Human Upgrade OS calculates your Performance Age™ by analyzing 50+ biomarkers from your blood test, including inflammation markers, hormone levels, metabolic health, and cellular aging indicators. A lower biological age than your chronological age means your body is performing ahead of schedule.",
+                q: "Do I need to order new blood tests?",
+                a: "No — just upload whatever you have. Any standard blood test from your doctor, a pharmacy, or a home test kit works. Even an old one gives useful insights. The more recent, the better.",
               },
               {
-                q: "How does AI blood test analysis work?",
-                a: "Upload a PDF or photo of your standard blood panel. Our AI reads and extracts 50+ biomarkers automatically — including testosterone, cortisol, insulin, CRP, HbA1c, and more. Within minutes it generates your biological age score, flags values outside optimal ranges, and creates a personalized protocol with specific supplements, sleep targets, peptides, and lifestyle interventions.",
+                q: "What exactly is 'biological age'?",
+                a: "Your biological age is how old your body actually functions — independent of your birthday. Someone who is 45 can have a body that functions like a 35-year-old (or a 55-year-old). We calculate yours from your blood markers and give you a precise score. Then we show you how to lower it.",
               },
               {
-                q: "What are peptide protocols and who are they for?",
-                a: "Peptides are short chains of amino acids that signal your body to repair, regenerate, and optimize specific functions. Common peptides include BPC-157 (gut and tissue repair), TB-500 (recovery and healing), CJC-1295 and Ipamorelin (growth hormone optimization), and Sermorelin. We analyze your biomarkers and readiness scores to recommend which peptides fit your biology, with exact dosing schedules.",
+                q: "I'm not an athlete. Is this for me?",
+                a: "Absolutely. Most of our users are regular people — parents, professionals, entrepreneurs — who feel tired, can't lose weight, or just want to feel better. You don't need to be a biohacker. If you want more energy and to age well, this is for you.",
               },
               {
-                q: "What blood tests do I need?",
-                a: "Any standard blood panel works — from your doctor, a private lab, or a home test kit. The more comprehensive your panel, the more detailed your protocol. At minimum, a basic metabolic panel, CBC, lipid panel, and hormone panel give excellent results. You can also upload partial panels and the AI works with whatever markers are available.",
+                q: "How is this different from talking to my doctor?",
+                a: "Your doctor checks if your values are in the 'normal' range — but normal doesn't mean optimal. We analyze where your values sit within the optimal range for peak performance, energy, and longevity. Most people are 'normal' but far from their best.",
               },
               {
-                q: "How quickly will I see results?",
-                a: "Most users notice improvements in energy, sleep quality, and recovery within 4–8 weeks of consistently following their protocol. Measurable biomarker improvements typically appear in blood work after 60–90 days. Biological age scores can shift by 2–5 years within 6 months of diligent protocol adherence. Your protocol updates automatically with each new lab upload.",
+                q: "How quickly will I feel a difference?",
+                a: "Most people notice improved energy and sleep within 2–4 weeks of following their plan. Measurable changes in body composition and biomarkers typically show up after 60–90 days. Your biological age can drop by 3–8 years in 6 months with consistent follow-through.",
               },
               {
                 q: "Is this a medical service?",
-                a: "No. Human Upgrade OS is a health optimization and information platform, not a medical device or service. It does not diagnose, treat, or prescribe. All protocols are educational and should be discussed with your healthcare provider. Always consult a licensed physician for medical decisions.",
+                a: "No. Human Upgrade OS is a health optimization and information platform, not a medical service. We don't diagnose or treat. All recommendations are educational. Always consult your doctor for medical decisions.",
               },
             ].map(({ q, a }, i) => (
               <FaqItem key={i} question={q} answer={a} />
@@ -502,22 +491,10 @@ export default function Landing() {
               <button onClick={() => setLocation("/terms")} className="hover:text-white transition-colors">Terms</button>
             </div>
             <div className="flex items-center gap-4">
-              <a
-                href="https://instagram.com/thehumanupgradeapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/30 hover:text-white transition-colors"
-                aria-label="Instagram"
-              >
+              <a href="https://instagram.com/thehumanupgradeapp" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white transition-colors" aria-label="Instagram">
                 <SiInstagram className="w-4 h-4" />
               </a>
-              <a
-                href="https://tiktok.com/@humanupgrade"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-white/30 hover:text-white transition-colors"
-                aria-label="TikTok"
-              >
+              <a href="https://tiktok.com/@humanupgrade" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white transition-colors" aria-label="TikTok">
                 <SiTiktok className="w-4 h-4" />
               </a>
             </div>
