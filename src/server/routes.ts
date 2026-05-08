@@ -1849,6 +1849,27 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   );
 
+  // Twitter auto-post (called by external cron job — Mon/Wed/Fri/Sat 10:00 UTC)
+  app.post("/api/internal/post-tweet", async (req: Request, res: Response) => {
+    try {
+      const { secret } = req.body;
+      const CRON_SECRET = process.env.CRON_SECRET;
+      if (!CRON_SECRET || secret !== CRON_SECRET) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      const { postScheduledTweet } = await import("./twitter");
+      const result = await postScheduledTweet();
+      if (result.success) {
+        res.json({ success: true, tweet: result.tweet });
+      } else {
+        res.status(500).json({ success: false, error: result.error });
+      }
+    } catch (error: any) {
+      console.error("Tweet post error:", error);
+      res.status(500).json({ message: "Failed to post tweet", error: error.message });
+    }
+  });
+
   // Weekly report email blast (called by external cron job)
   app.post("/api/internal/send-weekly-emails", async (req: Request, res: Response) => {
     try {
