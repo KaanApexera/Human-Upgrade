@@ -87,7 +87,7 @@ function getScoreColor(score: number | null | undefined): string {
   if (!score) return "text-muted-foreground";
   if (score >= 8) return "text-emerald-500";
   if (score >= 5) return "text-yellow-500";
-  return "text-red-500";
+  return "text-primary";
 }
 
 interface WhoopSuggestion {

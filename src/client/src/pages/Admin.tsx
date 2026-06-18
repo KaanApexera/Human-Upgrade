@@ -268,7 +268,7 @@ export default function Admin() {
                       <span className="text-xs text-muted-foreground">· First 50 users · $1/month</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="text-3xl font-bold text-white">
+                      <div className="text-3xl font-bold text-foreground">
                         {metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual}
                         <span className="text-lg text-muted-foreground font-normal">/50</span>
                       </div>
@@ -289,7 +289,7 @@ export default function Admin() {
                       <div className="text-xs text-muted-foreground">Beta MRR</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-white">
+                      <div className="text-2xl font-bold text-foreground">
                         {50 - (metrics.planBreakdown.premium_monthly + metrics.planBreakdown.premium_annual)}
                       </div>
                       <div className="text-xs text-muted-foreground">Spots left</div>

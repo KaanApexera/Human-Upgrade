@@ -145,7 +145,7 @@ export function DailyScoreWidget() {
   }
 
   const scoreValue = score?.score || 0;
-  const scoreColor = scoreValue >= 80 ? "text-green-500" : scoreValue >= 60 ? "text-amber-500" : "text-red-500";
+  const scoreColor = scoreValue >= 80 ? "text-green-500" : scoreValue >= 60 ? "text-amber-500" : "text-primary";
   
   const circumference = 2 * Math.PI * 50;
   const strokeDashoffset = circumference - (scoreValue / 100) * circumference;
@@ -213,7 +213,7 @@ export function DailyScoreWidget() {
             <div className="flex items-end gap-1 h-12">
               {scoreHistory.slice(0, 7).reverse().map((day, i) => {
                 const height = (day.score / 100) * 100;
-                const color = day.score >= 80 ? "bg-green-500" : day.score >= 60 ? "bg-amber-500" : "bg-red-500/70";
+                const color = day.score >= 80 ? "bg-green-500" : day.score >= 60 ? "bg-amber-500" : "bg-primary/70";
                 return (
                   <div
                     key={i}
@@ -393,7 +393,7 @@ export function StreakLevelWidget() {
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className={`w-12 h-12 rounded-full ${levelColors[level]} flex items-center justify-center`}>
-              <Trophy className="w-6 h-6 text-white" />
+              <Trophy className="w-6 h-6 text-foreground" />
             </div>
             <div>
               <div className="text-xs text-muted-foreground">Level</div>
@@ -560,7 +560,7 @@ export function WeeklyReportPreview() {
   const isUnread = !report.viewedAt;
   const change = report.scoreTrend?.change || 0;
   const changeLabel = change > 0 ? `+${change}%` : `${change}%`;
-  const changeColor = change >= 0 ? "text-green-500" : "text-red-500";
+  const changeColor = change >= 0 ? "text-green-500" : "text-primary";
 
   return (
     <Card data-testid="card-weekly-report" className={isUnread ? "ring-2 ring-brand-red/50" : ""}>

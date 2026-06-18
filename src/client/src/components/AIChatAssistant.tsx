@@ -264,15 +264,15 @@ export function AIChatAssistant({
                   <div
                     className={`max-w-[80%] rounded-lg p-3 text-sm whitespace-pre-wrap ${
                       message.role === "user"
-                        ? "bg-brand-red text-white"
+                        ? "bg-brand-red text-foreground"
                         : message.isEmergency
-                          ? "bg-red-950 border-2 border-red-500 text-red-100"
+                          ? "bg-red-950 border-2 border-primary text-primary"
                           : "bg-muted text-foreground"
                     }`}
                     data-testid={`message-${message.role}-${message.id}`}
                   >
                     {message.isEmergency && (
-                      <div className="flex items-center gap-2 mb-2 text-red-400 font-semibold">
+                      <div className="flex items-center gap-2 mb-2 text-primary font-semibold">
                         <svg
                           className="w-5 h-5"
                           fill="none"

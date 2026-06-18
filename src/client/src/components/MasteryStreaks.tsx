@@ -76,7 +76,7 @@ export function MasteryStreaks({
   const completedToday = categories.filter(c => c.completedToday).length;
   
   return (
-    <Card className="glass-card border-white/10" data-testid="card-mastery-streaks">
+    <Card className="glass-card border-foreground/10" data-testid="card-mastery-streaks">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-2">
           <Flame className="w-5 h-5 text-orange-400" />
@@ -127,7 +127,7 @@ function StreakItem({ category, onCheckIn }: StreakItemProps) {
       onMouseLeave={() => setIsHovered(false)}
       data-testid={`streak-item-${category.id}`}
     >
-      <div className={`p-2 rounded-full bg-white/5 ${category.color}`}>
+      <div className={`p-2 rounded-full bg-foreground/5 ${category.color}`}>
         <Icon className="w-4 h-4" />
       </div>
       
@@ -135,7 +135,7 @@ function StreakItem({ category, onCheckIn }: StreakItemProps) {
         <div className="flex items-center gap-2">
           <span className="font-medium text-sm truncate">{category.name}</span>
           {category.currentStreak >= 7 && (
-            <span className="text-xs px-1.5 py-0.5 rounded-full bg-white/10 text-amber-400">
+            <span className="text-xs px-1.5 py-0.5 rounded-full bg-foreground/10 text-amber-400">
               {category.currentStreak >= 30 ? "Legendary" : category.currentStreak >= 14 ? "Hot" : "Rising"}
             </span>
           )}
@@ -165,7 +165,7 @@ function StreakItem({ category, onCheckIn }: StreakItemProps) {
               <Circle className="w-4 h-4 text-muted-foreground" />
             </Button>
           ) : (
-            <div className="p-1.5 rounded-full bg-white/5">
+            <div className="p-1.5 rounded-full bg-foreground/5">
               <Circle className="w-4 h-4 text-muted-foreground" />
             </div>
           )}
@@ -194,7 +194,7 @@ export function WeeklyStreakCalendar({ weekData = [true, true, true, true, true,
               className={`w-6 h-6 rounded flex items-center justify-center text-xs font-medium transition-all ${
                 weekData[index] 
                   ? "bg-emerald-500/30 text-emerald-400 border border-emerald-500/50" 
-                  : "bg-white/5 text-muted-foreground border border-white/10"
+                  : "bg-foreground/5 text-muted-foreground border border-foreground/10"
               }`}
             >
               {day}
@@ -215,7 +215,7 @@ export function StreakMilestoneCard({ streak, milestone }: { streak: number; mil
   
   return (
     <div 
-      className={`p-3 rounded-lg border ${isAchieved ? "border-amber-500/50 bg-amber-500/10" : "border-white/10 bg-white/5"}`}
+      className={`p-3 rounded-lg border ${isAchieved ? "border-amber-500/50 bg-amber-500/10" : "border-foreground/10 bg-foreground/5"}`}
       data-testid={`milestone-${milestone}`}
     >
       <div className="flex items-center justify-between mb-2">

@@ -42,8 +42,8 @@ const STEPS = [
   },
   {
     icon: Activity,
-    color: "text-red-400",
-    bg: "bg-red-400/10 border-red-400/30",
+    color: "text-primary",
+    bg: "bg-primary/10 border-primary/30",
     title: "Step 2 — See Your Performance Age™",
     description:
       "After upload, you'll get your biological age score based on your biomarkers. This tells you if your body is performing younger or older than your real age.",

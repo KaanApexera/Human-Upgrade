@@ -154,12 +154,12 @@ export default function Tutorials() {
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-brand-red/20 to-transparent">
                     <Icon className="w-12 h-12 text-brand-red/50" />
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/50">
                     <div className="w-14 h-14 rounded-full bg-brand-red flex items-center justify-center">
-                      <Play className="w-6 h-6 text-white ml-1" />
+                      <Play className="w-6 h-6 text-foreground ml-1" />
                     </div>
                   </div>
-                  <Badge className="absolute top-2 right-2 bg-black/70">{tutorial.duration}</Badge>
+                  <Badge className="absolute top-2 right-2 bg-background/70">{tutorial.duration}</Badge>
                 </div>
                 <CardHeader className="pb-2">
                   <Badge variant="outline" className="w-fit mb-2">{tutorial.category}</Badge>

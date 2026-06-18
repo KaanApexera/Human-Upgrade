@@ -49,7 +49,7 @@ export function VIPWaitlist({
       <div className="relative">
         <div className="flex items-center gap-2 mb-4">
           <div className="p-2 rounded-full bg-gradient-to-br from-amber-400 to-amber-600">
-            <Crown className="w-5 h-5 text-white" />
+            <Crown className="w-5 h-5 text-foreground" />
           </div>
           <div>
             <h3 className="font-bold text-lg">VIP Early Access</h3>
@@ -58,19 +58,19 @@ export function VIPWaitlist({
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-foreground/5 border border-foreground/10">
             <div className="flex items-center gap-2 mb-1">
               <Users className="w-4 h-4 text-amber-400" />
               <span className="text-xs text-muted-foreground">On Waitlist</span>
             </div>
             <p className="text-2xl font-bold">{displayCount.toLocaleString()}</p>
           </div>
-          <div className="p-3 rounded-lg bg-white/5 border border-white/10">
+          <div className="p-3 rounded-lg bg-foreground/5 border border-foreground/10">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-red-400" />
+              <Clock className="w-4 h-4 text-primary" />
               <span className="text-xs text-muted-foreground">Spots Left</span>
             </div>
-            <p className="text-2xl font-bold text-red-400">{spotsRemaining}</p>
+            <p className="text-2xl font-bold text-primary">{spotsRemaining}</p>
           </div>
         </div>
 

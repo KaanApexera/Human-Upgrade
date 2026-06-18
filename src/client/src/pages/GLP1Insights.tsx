@@ -32,7 +32,7 @@ const GLP1_DRUGS = [
     bestFor: ["Maximum weight loss goal", "Insulin resistance", "HbA1c > 8.0%", "BMI > 35", "Metabolic syndrome"],
     sideEffects: ["Nausea (common)", "Diarrhea", "Decreased appetite", "Rare: gallbladder issues"],
     peptideStack: ["BPC-157 (GI protection)", "Ipamorelin (GH optimization)", "Epithalon (metabolic longevity)", "MOTS-C (insulin sensitivity)"],
-    color: "from-red-500/20 to-orange-600/10",
+    color: "from-primary/20 to-orange-600/10",
     accent: "#EF4444",
     badge: "Best Results",
   },
@@ -116,11 +116,11 @@ export default function GLP1Insights() {
       {/* Hero Header */}
       <div className="relative overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 bg-gradient-to-br from-red-950/40 via-background to-orange-950/20 pointer-events-none" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         <div className="relative px-6 py-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-red-600/10 border border-red-500/20">
-              <Syringe className="h-5 w-5 text-red-400" />
+            <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+              <Syringe className="h-5 w-5 text-primary" />
             </div>
             <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-xs font-semibold tracking-wider uppercase">
               Premium Intelligence
@@ -147,14 +147,14 @@ export default function GLP1Insights() {
         {/* Biomarker Signal Panel */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <FlaskConical className="h-4 w-4 text-red-400" />
+            <FlaskConical className="h-4 w-4 text-primary" />
             <h2 className="text-lg font-semibold">Biomarker Candidacy Signals</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {BIOMARKER_SIGNALS.map((signal) => (
               <div
                 key={signal.marker}
-                className="flex gap-3 p-4 rounded-xl border border-border/60 bg-card/50 hover:border-red-500/30 transition-colors"
+                className="flex gap-3 p-4 rounded-xl border border-border/60 bg-card/50 hover:border-primary/30 transition-colors"
               >
                 <span className="text-xl flex-shrink-0">{signal.icon}</span>
                 <div>
@@ -173,7 +173,7 @@ export default function GLP1Insights() {
         {/* GLP-1 Drug Comparison */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <Syringe className="h-4 w-4 text-red-400" />
+            <Syringe className="h-4 w-4 text-primary" />
             <h2 className="text-lg font-semibold">GLP-1 Medication Comparison</h2>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -294,13 +294,13 @@ export default function GLP1Insights() {
                   )}
                   <div className="p-5">
                     <div className="flex items-start gap-3 mb-4">
-                      <div className={`p-2 rounded-lg bg-white/5 ${stack.accentColor}`}>
+                      <div className={`p-2 rounded-lg bg-foreground/5 ${stack.accentColor}`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-base">{stack.name}</h3>
-                          <Badge className="text-xs bg-white/5 text-muted-foreground border-white/10">
+                          <Badge className="text-xs bg-foreground/5 text-muted-foreground border-foreground/10">
                             {stack.tier}
                           </Badge>
                           <div className="flex gap-1 flex-wrap">
@@ -316,7 +316,7 @@ export default function GLP1Insights() {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {stack.peptides.map(p => (
-                        <div key={p.name} className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                        <div key={p.name} className="p-3 rounded-xl bg-foreground/[0.03] border border-foreground/[0.06]">
                           <div className="flex items-center justify-between mb-1">
                             <p className={`text-sm font-medium ${stack.accentColor}`}>{p.name}</p>
                             <span className="text-xs text-muted-foreground/60">{p.dose}</span>
@@ -350,8 +350,8 @@ export default function GLP1Insights() {
         {/* Medical Disclaimer + Doctor CTA */}
         <section className="rounded-2xl border border-border/40 bg-card/40 p-6">
           <div className="flex gap-4 items-start">
-            <div className="p-2.5 rounded-xl bg-red-600/10 border border-red-500/20 flex-shrink-0">
-              <ShieldCheck className="h-5 w-5 text-red-400" />
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 flex-shrink-0">
+              <ShieldCheck className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-base mb-1">Medical Guidance Required</h3>
@@ -364,7 +364,7 @@ export default function GLP1Insights() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-red-500/30 text-red-400 hover:bg-red-950/30"
+                  className="border-primary/30 text-primary hover:bg-red-950/30"
                   onClick={() => window.open("https://www.zocdoc.com/", "_blank")}
                 >
                   <Heart className="h-3.5 w-3.5 mr-1.5" />

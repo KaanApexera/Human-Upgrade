@@ -231,7 +231,7 @@ export function AppSidebar() {
                   className="w-full"
                   data-testid="button-user-menu"
                 >
-                  <div className={`p-0.5 rounded-full ${isPremium ? "bg-gradient-to-br from-brand-red via-red-400 to-brand-red" : "bg-gradient-to-br from-white/20 to-white/5"}`}>
+                  <div className={`p-0.5 rounded-full ${isPremium ? "bg-gradient-to-br from-brand-red via-primary to-brand-red" : "bg-gradient-to-br from-white/20 to-white/5"}`}>
                     <Avatar className="h-7 w-7">
                       <AvatarImage src={user?.avatarUrl || undefined} />
                       <AvatarFallback className="bg-[#1a1a22] text-brand-red text-xs font-bold">
@@ -257,7 +257,7 @@ export function AppSidebar() {
                 <div className="px-2 py-1.5">
                   <Badge
                     variant="outline"
-                    className={`text-xs font-semibold tracking-wide ${isPremium ? "border-brand-red/40 text-brand-red bg-brand-red/8 badge-premium" : "border-white/15 text-white/50"}`}
+                    className={`text-xs font-semibold tracking-wide ${isPremium ? "border-brand-red/40 text-brand-red bg-brand-red/8 badge-premium" : "border-foreground/15 text-foreground/50"}`}
                   >
                     {isPremium ? "⬡ Premium" : user?.subscriptionPlan || "Free"}
                   </Badge>

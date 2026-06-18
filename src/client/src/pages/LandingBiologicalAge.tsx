@@ -6,17 +6,17 @@ import { ChevronRight, Check, ArrowDown, Brain, Flame, Battery, Moon, TrendingDo
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border border-white/[0.08] rounded-xl overflow-hidden">
+    <div className="border border-foreground/[0.08] rounded-xl overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-white/[0.03] transition-colors"
+        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-foreground/[0.03] transition-colors"
       >
-        <span className="text-white font-medium text-sm sm:text-base pr-4">{question}</span>
-        <span className={`text-white/40 text-xl flex-shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
+        <span className="text-foreground font-medium text-sm sm:text-base pr-4">{question}</span>
+        <span className={`text-foreground/40 text-xl flex-shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
       </button>
       {open && (
         <div className="px-6 pb-5">
-          <p className="text-white/50 text-sm leading-relaxed">{answer}</p>
+          <p className="text-foreground/50 text-sm leading-relaxed">{answer}</p>
         </div>
       )}
     </div>
@@ -25,61 +25,61 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
 
 const FACTORS = [
   {
-    icon: <Flame className="w-5 h-5 text-red-500" />,
+    icon: <Flame className="w-5 h-5 text-primary" />,
     title: "Chronic Inflammation",
     description: "Elevated CRP, IL-6, fibrinogen, and homocysteine are among the strongest drivers of accelerated biological aging. Chronic low-grade inflammation damages cellular DNA and shortens telomeres over time.",
     markers: "CRP, Homocysteine, Fibrinogen",
   },
   {
-    icon: <Activity className="w-5 h-5 text-red-500" />,
+    icon: <Activity className="w-5 h-5 text-primary" />,
     title: "Metabolic Health",
     description: "Insulin resistance and poor blood sugar regulation dramatically accelerate aging at the cellular level. High fasting insulin, elevated HbA1c, and poor glucose tolerance are major contributors to a higher biological age.",
     markers: "HbA1c, Fasting Insulin, Glucose, HOMA-IR",
   },
   {
-    icon: <Brain className="w-5 h-5 text-red-500" />,
+    icon: <Brain className="w-5 h-5 text-primary" />,
     title: "Hormone Balance",
     description: "Declining testosterone, estrogen, DHEA, and growth hormone accelerate biological aging. Conversely, elevated cortisol from chronic stress is one of the fastest ways to age your brain and body.",
     markers: "Testosterone, DHEA-S, Cortisol, IGF-1, Estradiol",
   },
   {
-    icon: <Heart className="w-5 h-5 text-red-500" />,
+    icon: <Heart className="w-5 h-5 text-primary" />,
     title: "Cardiovascular Markers",
     description: "Lipid patterns matter far beyond total cholesterol. Oxidized LDL, small dense LDL particles, elevated triglycerides, and low HDL are powerful predictors of vascular age and longevity.",
     markers: "LDL, HDL, Triglycerides, ApoB, Lp(a)",
   },
   {
-    icon: <Dna className="w-5 h-5 text-red-500" />,
+    icon: <Dna className="w-5 h-5 text-primary" />,
     title: "Oxidative Stress",
     description: "Free radical damage to DNA, proteins, and lipids accelerates cellular aging at its root. Antioxidant status — including glutathione, CoQ10, and vitamin E — shapes your rate of biological aging.",
     markers: "Uric Acid, GGT, Ferritin",
   },
   {
-    icon: <Zap className="w-5 h-5 text-red-500" />,
+    icon: <Zap className="w-5 h-5 text-primary" />,
     title: "Thyroid Function",
     description: "Sub-optimal thyroid function — even when technically 'normal' — slows metabolism, impairs cellular repair, reduces energy, and can add years to your biological age. Optimal TSH is far narrower than the clinical range.",
     markers: "TSH, Free T3, Free T4, Reverse T3",
   },
   {
-    icon: <Battery className="w-5 h-5 text-red-500" />,
+    icon: <Battery className="w-5 h-5 text-primary" />,
     title: "Nutrient Status",
     description: "Deficiencies in vitamin D, magnesium, B12, omega-3 fatty acids, zinc, and iron directly impair cellular repair mechanisms and mitochondrial function — accelerating the rate of biological aging.",
     markers: "Vitamin D, Magnesium, B12, Ferritin, Zinc",
   },
   {
-    icon: <Moon className="w-5 h-5 text-red-500" />,
+    icon: <Moon className="w-5 h-5 text-primary" />,
     title: "Sleep Quality",
     description: "Poor sleep is not just fatigue — it is an accelerated aging event. Inadequate sleep impairs growth hormone secretion, increases cortisol, elevates inflammatory markers, and damages DNA repair processes overnight.",
     markers: "Cortisol, GH (Growth Hormone), CRP",
   },
   {
-    icon: <TrendingDown className="w-5 h-5 text-red-500" />,
+    icon: <TrendingDown className="w-5 h-5 text-primary" />,
     title: "Liver & Kidney Function",
     description: "Your liver and kidneys are your primary detoxification organs. Impaired liver function elevates systemic toxin load and increases oxidative stress. Elevated creatinine or eGFR decline signals accelerated organ aging.",
     markers: "ALT, AST, GGT, Creatinine, eGFR, BUN",
   },
   {
-    icon: <Clock className="w-5 h-5 text-red-500" />,
+    icon: <Clock className="w-5 h-5 text-primary" />,
     title: "Immune Function",
     description: "Chronically elevated or suppressed immune markers signal accelerated biological aging. Both persistent infections and immune overactivation create inflammatory burden that ages cells faster.",
     markers: "WBC, Neutrophil/Lymphocyte Ratio, CBC Differential",
@@ -123,22 +123,22 @@ export default function LandingBiologicalAge() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="bg-[#080808] text-white min-h-screen overflow-x-hidden">
+    <div className="bg-[#080808] text-foreground min-h-screen overflow-x-hidden">
       {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-[2px]">
+      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-b from-background/70 to-transparent backdrop-blur-[2px]">
         <Link href="/" className="cursor-pointer">
           <Logo size="md" />
         </Link>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setLocation("/login")}
-            className="text-white/70 hover:text-white text-sm font-medium transition-colors px-4 py-2"
+            className="text-foreground/70 hover:text-foreground text-sm font-medium transition-colors px-4 py-2"
           >
             Log in
           </button>
           <button
             onClick={() => setLocation("/register")}
-            className="bg-white text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-white/90 transition-colors"
+            className="bg-foreground text-black text-sm font-semibold px-5 py-2 rounded-full hover:bg-foreground/90 transition-colors"
           >
             Start free
           </button>
@@ -149,34 +149,34 @@ export default function LandingBiologicalAge() {
       <section className="relative min-h-[80vh] flex flex-col items-center justify-center px-6 pt-24 pb-16 text-center">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/20 via-transparent to-transparent pointer-events-none" />
         <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-4 py-1.5 mb-8">
-            <span className="text-red-400 text-xs font-semibold uppercase tracking-widest">Biological Age Calculator</span>
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-8">
+            <span className="text-primary text-xs font-semibold uppercase tracking-widest">Biological Age Calculator</span>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-[0.95] tracking-tight mb-6">
             How Old Is Your Body{" "}
-            <span className="text-red-500">Really?</span>
+            <span className="text-primary">Really?</span>
           </h1>
-          <p className="text-white/60 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-foreground/60 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
             Your birthday doesn't tell the whole story. Your blood work does. Calculate your biological age, discover what's driving it, and get a personalized longevity protocol to lower it — using AI and your existing blood tests.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => setLocation("/register")}
-              className="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-full text-base transition-colors flex items-center justify-center gap-2"
+              className="bg-primary hover:bg-primary text-foreground font-bold px-8 py-4 rounded-full text-base transition-colors flex items-center justify-center gap-2"
             >
               Calculate My Biological Age Free
               <ChevronRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => setLocation("/pricing")}
-              className="border border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-full text-base transition-colors"
+              className="border border-foreground/20 hover:border-foreground/40 text-foreground font-semibold px-8 py-4 rounded-full text-base transition-colors"
             >
               View Pricing
             </button>
           </div>
-          <p className="mt-4 text-white/30 text-sm">Use your existing blood tests — no new labs required</p>
+          <p className="mt-4 text-foreground/30 text-sm">Use your existing blood tests — no new labs required</p>
         </div>
-        <div className="absolute bottom-8 flex flex-col items-center gap-2 text-white/20">
+        <div className="absolute bottom-8 flex flex-col items-center gap-2 text-foreground/20">
           <ArrowDown className="w-5 h-5 animate-bounce" />
         </div>
       </section>
@@ -188,23 +188,23 @@ export default function LandingBiologicalAge() {
             <h2 className="text-3xl sm:text-4xl font-black mb-6 leading-tight">
               What Is Biological Age — and Why Does It Matter?
             </h2>
-            <p className="text-white/60 leading-relaxed mb-4">
+            <p className="text-foreground/60 leading-relaxed mb-4">
               Your chronological age is simply how many years you've been alive. Your biological age is how old your body actually functions — at the cellular, metabolic, and organ level.
             </p>
-            <p className="text-white/60 leading-relaxed mb-4">
+            <p className="text-foreground/60 leading-relaxed mb-4">
               Two people can both be 45 years old. One has the biological profile of a 38-year-old: sharp hormones, low inflammation, excellent metabolic health, strong cardiovascular markers. The other has a biological age of 57: chronic inflammation, insulin resistance, declining testosterone, and oxidative stress accumulating in every cell.
             </p>
-            <p className="text-white/60 leading-relaxed mb-4">
+            <p className="text-foreground/60 leading-relaxed mb-4">
               The difference is not luck. It is measurable, driven by specific biomarkers in your blood — and most importantly, it is reversible.
             </p>
-            <p className="text-white/60 leading-relaxed">
+            <p className="text-foreground/60 leading-relaxed">
               Human Upgrade OS calculates your Performance Age™ — a biological age score derived from 50+ blood biomarkers — and then builds a personalized longevity protocol to lower it. Most users see their biological age drop by 2-7 years within 6 months of following their protocol.
             </p>
           </div>
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8">
+          <div className="bg-foreground/[0.03] border border-foreground/[0.08] rounded-2xl p-8">
             <div className="text-center mb-6">
-              <div className="text-white/40 text-sm uppercase tracking-widest mb-2">Example Comparison</div>
-              <div className="text-white/60 text-sm">Same chronological age, very different biological age</div>
+              <div className="text-foreground/40 text-sm uppercase tracking-widest mb-2">Example Comparison</div>
+              <div className="text-foreground/60 text-sm">Same chronological age, very different biological age</div>
             </div>
             <div className="space-y-4">
               {[
@@ -216,13 +216,13 @@ export default function LandingBiologicalAge() {
                 { label: "Vitamin D", a: "62 ng/mL", b: "18 ng/mL", equal: false },
               ].map((row) => (
                 <div key={row.label} className="grid grid-cols-3 gap-2 text-sm">
-                  <div className="text-white/40">{row.label}</div>
+                  <div className="text-foreground/40">{row.label}</div>
                   <div className="text-center font-semibold text-green-400">{row.a}</div>
-                  <div className={`text-center font-semibold ${row.equal ? "text-white/60" : "text-red-400"}`}>{row.b}</div>
+                  <div className={`text-center font-semibold ${row.equal ? "text-foreground/60" : "text-primary"}`}>{row.b}</div>
                 </div>
               ))}
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-white/30">
+            <div className="mt-4 grid grid-cols-3 gap-2 text-xs text-foreground/30">
               <div></div>
               <div className="text-center">Person A</div>
               <div className="text-center">Person B</div>
@@ -232,11 +232,11 @@ export default function LandingBiologicalAge() {
       </section>
 
       {/* ── HOW IT'S CALCULATED ── */}
-      <section className="px-6 py-20 bg-white/[0.02] border-y border-white/[0.05]">
+      <section className="px-6 py-20 bg-foreground/[0.02] border-y border-foreground/[0.05]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-black mb-4">How Biological Age Is Calculated</h2>
-            <p className="text-white/50 max-w-2xl mx-auto text-lg">
+            <p className="text-foreground/50 max-w-2xl mx-auto text-lg">
               Human Upgrade OS uses a composite biomarker algorithm that weighs and correlates over 50 markers against longevity research databases to produce your Performance Age™ score.
             </p>
           </div>
@@ -258,16 +258,16 @@ export default function LandingBiologicalAge() {
                 body: "Your Performance Age™ is calculated by combining weighted scores across inflammation, hormones, metabolic health, cardiovascular markers, nutrient status, and organ function. The result is a single number that reflects your true biological age.",
               },
             ].map((item) => (
-              <div key={item.step} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
-                <div className="text-red-500 font-black text-4xl mb-4 font-mono">{item.step}</div>
-                <h3 className="text-white font-bold text-lg mb-3">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.body}</p>
+              <div key={item.step} className="bg-foreground/[0.03] border border-foreground/[0.08] rounded-2xl p-6">
+                <div className="text-primary font-black text-4xl mb-4 font-mono">{item.step}</div>
+                <h3 className="text-foreground font-bold text-lg mb-3">{item.title}</h3>
+                <p className="text-foreground/50 text-sm leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>
-          <div className="bg-red-600/10 border border-red-500/20 rounded-2xl p-6 text-center">
-            <p className="text-white/70 text-sm leading-relaxed max-w-3xl mx-auto">
-              <strong className="text-white">Important:</strong> Human Upgrade OS is not a medical service. Biological age scores are educational and informational — not a clinical diagnosis. Always consult your physician before making health decisions based on biomarker data.
+          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6 text-center">
+            <p className="text-foreground/70 text-sm leading-relaxed max-w-3xl mx-auto">
+              <strong className="text-foreground">Important:</strong> Human Upgrade OS is not a medical service. Biological age scores are educational and informational — not a clinical diagnosis. Always consult your physician before making health decisions based on biomarker data.
             </p>
           </div>
         </div>
@@ -277,41 +277,41 @@ export default function LandingBiologicalAge() {
       <section className="px-6 py-20 max-w-5xl mx-auto">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-black mb-4">10 Biomarker Factors That Drive Biological Age</h2>
-          <p className="text-white/50 max-w-2xl mx-auto text-lg">
+          <p className="text-foreground/50 max-w-2xl mx-auto text-lg">
             These are the most powerful levers in your blood work. Human Upgrade OS analyzes all of them — and tells you exactly which ones to address first.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 gap-6">
           {FACTORS.map((factor) => (
-            <div key={factor.title} className="bg-white/[0.02] border border-white/[0.07] rounded-2xl p-6 hover:border-red-500/20 transition-colors">
+            <div key={factor.title} className="bg-foreground/[0.02] border border-foreground/[0.07] rounded-2xl p-6 hover:border-primary/20 transition-colors">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                   {factor.icon}
                 </div>
-                <h3 className="text-white font-bold text-base">{factor.title}</h3>
+                <h3 className="text-foreground font-bold text-base">{factor.title}</h3>
               </div>
-              <p className="text-white/50 text-sm leading-relaxed mb-3">{factor.description}</p>
-              <div className="text-xs text-red-400/70 font-mono">Key markers: {factor.markers}</div>
+              <p className="text-foreground/50 text-sm leading-relaxed mb-3">{factor.description}</p>
+              <div className="text-xs text-primary/70 font-mono">Key markers: {factor.markers}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── HOW TO IMPROVE ── */}
-      <section className="px-6 py-20 bg-white/[0.02] border-y border-white/[0.05]">
+      <section className="px-6 py-20 bg-foreground/[0.02] border-y border-foreground/[0.05]">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-black mb-4">How to Lower Your Biological Age</h2>
-            <p className="text-white/50 max-w-2xl mx-auto text-lg">
+            <p className="text-foreground/50 max-w-2xl mx-auto text-lg">
               Biological age is not fixed. These six evidence-based strategies — applied in the right sequence based on your biomarkers — are how you reverse it.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
             {HOW_TO_IMPROVE.map((item) => (
-              <div key={item.step} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
-                <div className="text-red-500 font-black text-3xl mb-3 font-mono">{item.step}</div>
-                <h3 className="text-white font-bold text-lg mb-3">{item.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
+              <div key={item.step} className="bg-foreground/[0.03] border border-foreground/[0.08] rounded-2xl p-6">
+                <div className="text-primary font-black text-3xl mb-3 font-mono">{item.step}</div>
+                <h3 className="text-foreground font-bold text-lg mb-3">{item.title}</h3>
+                <p className="text-foreground/50 text-sm leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
@@ -322,13 +322,13 @@ export default function LandingBiologicalAge() {
       <section className="px-6 py-20 max-w-5xl mx-auto">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-black mb-4">Why Human Upgrade OS — Not Just Your Doctor</h2>
-          <p className="text-white/50 max-w-2xl mx-auto text-lg">
+          <p className="text-foreground/50 max-w-2xl mx-auto text-lg">
             Standard medicine is designed to keep you from being sick. Longevity medicine is designed to make you thrive. The difference is in how the data is interpreted.
           </p>
         </div>
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8">
-            <h3 className="text-white/40 font-bold text-lg mb-6 uppercase tracking-widest text-sm">Standard Doctor Visit</h3>
+          <div className="bg-foreground/[0.02] border border-foreground/[0.08] rounded-2xl p-8">
+            <h3 className="text-foreground/40 font-bold text-lg mb-6 uppercase tracking-widest text-sm">Standard Doctor Visit</h3>
             <ul className="space-y-4">
               {[
                 "Checks if markers are within broad 'normal' lab ranges",
@@ -338,15 +338,15 @@ export default function LandingBiologicalAge() {
                 "15-minute appointment, no follow-up analysis",
                 "Normal range designed to detect disease, not optimize health",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-white/50">
-                  <span className="text-white/20 mt-0.5 flex-shrink-0">—</span>
+                <li key={item} className="flex items-start gap-3 text-sm text-foreground/50">
+                  <span className="text-foreground/20 mt-0.5 flex-shrink-0">—</span>
                   {item}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-red-600/5 border border-red-500/20 rounded-2xl p-8">
-            <h3 className="text-red-400 font-bold text-lg mb-6 uppercase tracking-widest text-sm">Human Upgrade OS</h3>
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8">
+            <h3 className="text-primary font-bold text-lg mb-6 uppercase tracking-widest text-sm">Human Upgrade OS</h3>
             <ul className="space-y-4">
               {[
                 "Analyzes markers against optimal longevity ranges from research",
@@ -356,8 +356,8 @@ export default function LandingBiologicalAge() {
                 "Day-by-day actionable plan, updates with every new upload",
                 "Designed to optimize performance and slow biological aging",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-white">
-                  <Check className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                <li key={item} className="flex items-start gap-3 text-sm text-foreground">
+                  <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
                   {item}
                 </li>
               ))}
@@ -367,7 +367,7 @@ export default function LandingBiologicalAge() {
       </section>
 
       {/* ── COMMON QUESTIONS ── */}
-      <section className="px-6 py-20 bg-white/[0.02] border-y border-white/[0.05]">
+      <section className="px-6 py-20 bg-foreground/[0.02] border-y border-foreground/[0.05]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-black mb-4">Common Questions</h2>
@@ -414,41 +414,41 @@ export default function LandingBiologicalAge() {
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl sm:text-5xl font-black mb-6 leading-tight">
             Find Out How Old Your Body{" "}
-            <span className="text-red-500">Actually Is</span>
+            <span className="text-primary">Actually Is</span>
           </h2>
-          <p className="text-white/50 text-lg mb-10 leading-relaxed">
+          <p className="text-foreground/50 text-lg mb-10 leading-relaxed">
             Upload your existing blood test. Get your biological age score, identify the exact markers driving it, and receive a personalized longevity protocol to lower it — starting today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => setLocation("/register")}
-              className="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-full text-base transition-colors flex items-center justify-center gap-2"
+              className="bg-primary hover:bg-primary text-foreground font-bold px-8 py-4 rounded-full text-base transition-colors flex items-center justify-center gap-2"
             >
               Calculate My Biological Age Free
               <ChevronRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => setLocation("/pricing")}
-              className="border border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-full text-base transition-colors"
+              className="border border-foreground/20 hover:border-foreground/40 text-foreground font-semibold px-8 py-4 rounded-full text-base transition-colors"
             >
               View Plans
             </button>
           </div>
-          <p className="mt-5 text-white/30 text-sm">No new blood tests required · Use your existing results · Cancel anytime</p>
+          <p className="mt-5 text-foreground/30 text-sm">No new blood tests required · Use your existing results · Cancel anytime</p>
         </div>
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-white/[0.06] px-6 py-12">
+      <footer className="border-t border-foreground/[0.06] px-6 py-12">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <Logo size="sm" />
-          <div className="flex flex-wrap items-center gap-6 text-sm text-white/30">
-            <Link href="/privacy" className="hover:text-white/60 transition-colors">Privacy</Link>
-            <Link href="/terms" className="hover:text-white/60 transition-colors">Terms</Link>
-            <Link href="/pricing" className="hover:text-white/60 transition-colors">Pricing</Link>
-            <Link href="/" className="hover:text-white/60 transition-colors">Home</Link>
+          <div className="flex flex-wrap items-center gap-6 text-sm text-foreground/30">
+            <Link href="/privacy" className="hover:text-foreground/60 transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-foreground/60 transition-colors">Terms</Link>
+            <Link href="/pricing" className="hover:text-foreground/60 transition-colors">Pricing</Link>
+            <Link href="/" className="hover:text-foreground/60 transition-colors">Home</Link>
           </div>
-          <p className="text-white/20 text-xs text-center sm:text-right">
+          <p className="text-foreground/20 text-xs text-center sm:text-right">
             © {new Date().getFullYear()} Human Upgrade OS. Not a medical service.
           </p>
         </div>

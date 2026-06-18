@@ -79,7 +79,7 @@ export default function CompareReports() {
 
     return {
       icon: diff > 0 ? ArrowUp : ArrowDown,
-      color: isImprovement ? "text-green-500" : "text-red-500",
+      color: isImprovement ? "text-green-500" : "text-primary",
       text: `${diff > 0 ? "+" : ""}${percentChange}%`,
     };
   };

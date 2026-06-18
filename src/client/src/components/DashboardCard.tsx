@@ -64,7 +64,7 @@ export function DashboardCard({
               <Button
                 size="sm"
                 onClick={onUpgrade}
-                className="bg-brand-red hover:bg-brand-red/90 text-white rounded-full"
+                className="bg-brand-red hover:bg-brand-red/90 text-foreground rounded-full"
                 data-testid="button-upgrade-card"
               >
                 Upgrade to Unlock
@@ -91,7 +91,7 @@ export function MetricDisplay({ label, value, unit, trend, status = "neutral" }:
   const statusColors = {
     good: "text-green-400",
     warning: "text-yellow-400",
-    critical: "text-red-400",
+    critical: "text-primary",
     neutral: "text-foreground",
   };
 
@@ -108,7 +108,7 @@ export function MetricDisplay({ label, value, unit, trend, status = "neutral" }:
         {trend && (
           <TrendIcon
             className={`w-4 h-4 ${
-              trend === "up" ? "text-green-400" : trend === "down" ? "text-red-400" : "text-muted-foreground"
+              trend === "up" ? "text-green-400" : trend === "down" ? "text-primary" : "text-muted-foreground"
             }`}
           />
         )}
@@ -127,7 +127,7 @@ interface ProtocolItemProps {
 
 export function ProtocolItem({ name, dosage, timing, frequency, priority = "medium" }: ProtocolItemProps) {
   const priorityColors = {
-    high: "bg-red-500/20 text-red-400 border-red-500/30",
+    high: "bg-primary/20 text-primary border-primary/30",
     medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     low: "bg-green-500/20 text-green-400 border-green-500/30",
   };
@@ -167,7 +167,7 @@ export function StatusBadge({ status, label }: StatusBadgeProps) {
     optimal: { icon: CheckCircle2, color: "bg-green-500/20 text-green-400 border-green-500/30", text: "Optimal" },
     good: { icon: CheckCircle2, color: "bg-green-500/20 text-green-400 border-green-500/30", text: "Good" },
     "needs-attention": { icon: AlertTriangle, color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30", text: "Needs Attention" },
-    critical: { icon: AlertTriangle, color: "bg-red-500/20 text-red-400 border-red-500/30", text: "Critical" },
+    critical: { icon: AlertTriangle, color: "bg-primary/20 text-primary border-primary/30", text: "Critical" },
   };
 
   const config = statusConfig[status];
@@ -206,7 +206,7 @@ export function PerformanceAgeDisplay({ chronologicalAge, performanceAge }: Perf
         {difference !== 0 && (
           <Badge
             variant="outline"
-            className={isYounger ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-red-500/20 text-red-400 border-red-500/30"}
+            className={isYounger ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-primary/20 text-primary border-primary/30"}
           >
             {isYounger ? `-${difference}` : `+${Math.abs(difference)}`} years
           </Badge>
@@ -228,7 +228,7 @@ export function RiskItemDisplay({ category, level, description, recommendation }
     low: { color: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/30" },
     moderate: { color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
     high: { color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/30" },
-    critical: { color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/30" },
+    critical: { color: "text-primary", bg: "bg-primary/10", border: "border-primary/30" },
   };
 
   const config = levelConfig[level];

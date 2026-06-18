@@ -172,9 +172,9 @@ export function CycleOptimizer({ existingData, onClose }: CycleOptimizerProps) {
       </div>
 
       {generateMutation.isError && (
-        <Card className="border-red-500/20 bg-red-500/5">
+        <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-6">
-            <p className="text-red-500">Failed to generate recommendations. Please try again.</p>
+            <p className="text-primary">Failed to generate recommendations. Please try again.</p>
           </CardContent>
         </Card>
       )}
@@ -196,7 +196,7 @@ export function CycleOptimizer({ existingData, onClose }: CycleOptimizerProps) {
       {generateMutation.isPending && (
         <Card>
           <CardContent className="py-12 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-red-500" />
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
             <p className="text-muted-foreground">Analyzing your biomarkers and generating cycle recommendations...</p>
           </CardContent>
         </Card>
@@ -204,10 +204,10 @@ export function CycleOptimizer({ existingData, onClose }: CycleOptimizerProps) {
 
       {data && !generateMutation.isPending && (
         <div className="space-y-6">
-          <Card className="border-red-500/20">
+          <Card className="border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Syringe className="h-5 w-5 text-red-500" />
+                <Syringe className="h-5 w-5 text-primary" />
                 Peptide Cycles
               </CardTitle>
               <CardDescription>Recommended peptides based on your biomarker profile</CardDescription>
@@ -254,21 +254,21 @@ export function CycleOptimizer({ existingData, onClose }: CycleOptimizerProps) {
                     
                     <div className="grid sm:grid-cols-3 gap-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-red-500" />
+                        <Activity className="h-4 w-4 text-primary" />
                         <div>
                           <p className="text-xs text-muted-foreground">Dosage</p>
                           <p className="font-medium">{peptide.dosage}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-red-500" />
+                        <Calendar className="h-4 w-4 text-primary" />
                         <div>
                           <p className="text-xs text-muted-foreground">Frequency</p>
                           <p className="font-medium">{peptide.frequency}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-red-500" />
+                        <Clock className="h-4 w-4 text-primary" />
                         <div>
                           <p className="text-xs text-muted-foreground">Timing</p>
                           <p className="font-medium">{peptide.timing}</p>
@@ -396,12 +396,12 @@ export function CycleOptimizer({ existingData, onClose }: CycleOptimizerProps) {
             </Card>
           </div>
 
-          <Card className="bg-red-500/5 border-red-500/20">
+          <Card className="bg-primary/5 border-primary/20">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+                <AlertTriangle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-red-500 mb-2">Medical Disclaimer</p>
+                  <p className="font-semibold text-primary mb-2">Medical Disclaimer</p>
                   <p className="text-sm text-muted-foreground">{data.disclaimer}</p>
                 </div>
               </div>

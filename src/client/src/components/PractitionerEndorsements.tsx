@@ -85,7 +85,7 @@ export function PractitionerEndorsements({
 
   return (
     <Card 
-      className="glass-card border-white/10 p-6 relative overflow-hidden"
+      className="glass-card border-foreground/10 p-6 relative overflow-hidden"
       data-testid="card-practitioner-endorsements"
     >
       <div className="absolute top-4 right-4">
@@ -137,14 +137,14 @@ export function PractitionerEndorsements({
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/10">
+      <div className="flex items-center justify-between mt-6 pt-4 border-t border-foreground/10">
         <div className="flex gap-1">
           {PRACTITIONERS.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex ? "bg-brand-red w-4" : "bg-white/20"
+                index === currentIndex ? "bg-brand-red w-4" : "bg-foreground/20"
               }`}
               data-testid={`endorsement-dot-${index}`}
             />
@@ -166,7 +166,7 @@ export function PractitionerEndorsements({
 
 export function MiniEndorsement() {
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10" data-testid="mini-endorsement">
+    <div className="flex items-center gap-3 p-3 rounded-lg bg-foreground/5 border border-foreground/10" data-testid="mini-endorsement">
       <div className="flex -space-x-2">
         {PRACTITIONERS.slice(0, 3).map((p) => (
           <Avatar key={p.id} className="w-8 h-8 border-2 border-background">

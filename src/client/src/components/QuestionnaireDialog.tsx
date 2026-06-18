@@ -82,7 +82,7 @@ export function QuestionnaireDialog({
     if (bmi < 18.5) return { label: "Underweight", color: "text-blue-400" };
     if (bmi < 25) return { label: "Normal", color: "text-green-400" };
     if (bmi < 30) return { label: "Overweight", color: "text-yellow-400" };
-    return { label: "Obese", color: "text-red-400" };
+    return { label: "Obese", color: "text-primary" };
   };
 
   const canProceedStep1 = Boolean(formData.heightCm && formData.weightKg && formData.age && formData.gender);

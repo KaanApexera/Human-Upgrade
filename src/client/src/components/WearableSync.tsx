@@ -77,7 +77,7 @@ export function WearableSync({
 
   if (!isPremium) {
     return (
-      <Card className="glass-card border-white/10 relative overflow-hidden" data-testid="card-wearable-sync-locked">
+      <Card className="glass-card border-foreground/10 relative overflow-hidden" data-testid="card-wearable-sync-locked">
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
           <div className="p-2 rounded-full bg-cyan-500/20">
             <Watch className="w-5 h-5 text-cyan-400" />
@@ -94,9 +94,9 @@ export function WearableSync({
             {devices.slice(0, 4).map((device) => (
               <div 
                 key={device.id}
-                className="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center gap-2"
+                className="p-3 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center gap-2"
               >
-                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center text-xs font-bold">
                   {device.icon}
                 </div>
                 <span className="text-sm">{device.name}</span>
@@ -105,7 +105,7 @@ export function WearableSync({
           </div>
           
           <div className="flex flex-col items-center py-4 text-center">
-            <div className="p-3 rounded-full bg-white/5 border border-white/10 mb-3">
+            <div className="p-3 rounded-full bg-foreground/5 border border-foreground/10 mb-3">
               <Lock className="w-6 h-6 text-muted-foreground" />
             </div>
             <p className="text-sm text-muted-foreground mb-4">
@@ -124,7 +124,7 @@ export function WearableSync({
   const connectedDevices = devices.filter(d => d.connected);
 
   return (
-    <Card className="glass-card border-white/10" data-testid="card-wearable-sync">
+    <Card className="glass-card border-foreground/10" data-testid="card-wearable-sync">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-full bg-cyan-500/20">
@@ -164,7 +164,7 @@ export function WearableSync({
           ))}
         </div>
 
-        <div className="pt-3 border-t border-white/10">
+        <div className="pt-3 border-t border-foreground/10">
           <p className="text-xs text-muted-foreground mb-2">Synced Metrics</p>
           <div className="flex flex-wrap gap-2">
             <MetricBadge icon={Heart} label="HRV" value="45ms" />
@@ -192,7 +192,7 @@ function DeviceItem({
       className="flex items-center gap-3 p-2 rounded-lg hover-elevate"
       data-testid={`device-${device.id}`}
     >
-      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-bold">
+      <div className="w-10 h-10 rounded-full bg-foreground/10 flex items-center justify-center font-bold">
         {device.icon}
       </div>
       
@@ -237,7 +237,7 @@ function DeviceItem({
 
 function MetricBadge({ icon: Icon, label, value }: { icon: typeof Heart; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/5 border border-white/10 text-xs">
+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-xs">
       <Icon className="w-3 h-3 text-cyan-400" />
       <span className="text-muted-foreground">{label}:</span>
       <span className="font-medium">{value}</span>

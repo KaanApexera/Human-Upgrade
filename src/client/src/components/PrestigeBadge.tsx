@@ -94,7 +94,7 @@ export function PrestigeBadge({
 
   const badgeContent = (
     <div 
-      className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${config.color} ${sizeClasses[size]} font-medium text-white`}
+      className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${config.color} ${sizeClasses[size]} font-medium text-foreground`}
       style={{ boxShadow: `0 0 12px ${config.glowColor}` }}
       data-testid={`badge-prestige-${level}`}
     >
@@ -154,7 +154,7 @@ export function PrestigeProgress({ level, points, currentStreak = 0, longestStre
         )}
       </div>
       
-      <div className="relative h-2 bg-white/10 rounded-full overflow-hidden mb-4">
+      <div className="relative h-2 bg-foreground/10 rounded-full overflow-hidden mb-4">
         <div 
           className={`absolute inset-y-0 left-0 bg-gradient-to-r ${config.color} rounded-full transition-all duration-500`}
           style={{ width: `${Math.min(progressPercent, 100)}%` }}

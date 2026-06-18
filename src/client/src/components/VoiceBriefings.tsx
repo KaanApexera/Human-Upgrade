@@ -32,8 +32,8 @@ export function VoiceBriefings({ isPremium = false, onUpgrade }: VoiceBriefingsP
 
   if (!isPremium) {
     return (
-      <Card className="glass-card border-white/10 relative overflow-hidden" data-testid="card-voice-briefings-locked">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-10" />
+      <Card className="glass-card border-foreground/10 relative overflow-hidden" data-testid="card-voice-briefings-locked">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/60 z-10" />
         <CardHeader className="flex flex-row items-center gap-4 pb-2">
           <div className="p-2 rounded-full bg-purple-500/20">
             <Mic className="w-5 h-5 text-purple-400" />
@@ -47,7 +47,7 @@ export function VoiceBriefings({ isPremium = false, onUpgrade }: VoiceBriefingsP
         </CardHeader>
         <CardContent className="relative z-20">
           <div className="flex flex-col items-center py-6 text-center">
-            <div className="p-4 rounded-full bg-white/5 border border-white/10 mb-4">
+            <div className="p-4 rounded-full bg-foreground/5 border border-foreground/10 mb-4">
               <Lock className="w-8 h-8 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground mb-4">
@@ -64,7 +64,7 @@ export function VoiceBriefings({ isPremium = false, onUpgrade }: VoiceBriefingsP
   }
 
   return (
-    <Card className="glass-card border-white/10" data-testid="card-voice-briefings">
+    <Card className="glass-card border-foreground/10" data-testid="card-voice-briefings">
       <CardHeader className="flex flex-row items-center gap-4 pb-2">
         <div className="p-2 rounded-full bg-purple-500/20">
           <Mic className="w-5 h-5 text-purple-400" />
@@ -72,7 +72,7 @@ export function VoiceBriefings({ isPremium = false, onUpgrade }: VoiceBriefingsP
         <CardTitle className="text-lg">Voice Briefings</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+        <div className="p-4 rounded-lg bg-foreground/5 border border-foreground/10">
           <div className="flex items-center justify-between mb-3">
             <div>
               <p className="font-medium">Morning Optimization Brief</p>

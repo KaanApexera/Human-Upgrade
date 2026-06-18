@@ -88,13 +88,13 @@ export function SmartNotifications({
   const highPriorityCount = notifications.filter(n => n.priority === "high").length;
 
   return (
-    <Card className="glass-card border-white/10" data-testid="card-smart-notifications">
+    <Card className="glass-card border-foreground/10" data-testid="card-smart-notifications">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2">
         <div className="flex items-center gap-2">
           <div className="relative">
             <Bell className="w-5 h-5 text-brand-red" />
             {highPriorityCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-red rounded-full text-xs flex items-center justify-center text-white">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-red rounded-full text-xs flex items-center justify-center text-foreground">
                 {highPriorityCount}
               </span>
             )}
@@ -155,7 +155,7 @@ function NotificationItem({
           <div className="flex items-center gap-2 mb-1">
             <h4 className="font-medium text-sm">{notification.title}</h4>
             {notification.priority === "high" && (
-              <Badge className="bg-red-500/20 text-red-400 text-xs">Priority</Badge>
+              <Badge className="bg-primary/20 text-primary text-xs">Priority</Badge>
             )}
           </div>
           <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>

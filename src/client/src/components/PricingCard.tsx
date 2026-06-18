@@ -75,7 +75,7 @@ export function PricingCard({
     >
       {isPopular && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-          <Badge className="bg-brand-red text-white border-0 px-4 py-1 text-xs font-semibold">
+          <Badge className="bg-brand-red text-foreground border-0 px-4 py-1 text-xs font-semibold">
             Most Popular
           </Badge>
         </div>
@@ -83,7 +83,7 @@ export function PricingCard({
 
       {savingsPercent && (
         <div className="absolute -top-3 right-4 z-10">
-          <Badge className="bg-green-600 text-white border-0 px-3 py-1 text-xs font-semibold">
+          <Badge className="bg-green-600 text-foreground border-0 px-3 py-1 text-xs font-semibold">
             Save {savingsPercent}%
           </Badge>
         </div>
@@ -143,7 +143,7 @@ export function PricingCard({
         <Button
           onClick={onSelect}
           disabled={isLoading || isCurrentPlan}
-          className={`w-full rounded-full font-semibold ${styles.button} text-white`}
+          className={`w-full rounded-full font-semibold ${styles.button} text-foreground`}
           data-testid={`button-select-${variant}`}
         >
           {isCurrentPlan ? "Current Plan" : isLoading ? "Processing..." : "Get Started"}

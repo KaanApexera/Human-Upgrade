@@ -1271,7 +1271,7 @@ function DashboardGrid({
               disabled={!isPremium || isLockedForTrial}
               data-testid="button-open-cycle-optimizer"
             >
-              <Syringe className="h-5 w-5 text-red-500 shrink-0" />
+              <Syringe className="h-5 w-5 text-primary shrink-0" />
               <span className="flex flex-col items-start">
                 <span className="text-sm font-medium">Peptide & TRT Optimizer</span>
                 <span className="text-xs text-muted-foreground font-normal">Advanced</span>

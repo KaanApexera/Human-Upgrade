@@ -45,7 +45,7 @@ export function AchievementCard({ achievement, onShare, shareable = true }: Achi
   
   return (
     <Card 
-      className={`relative overflow-visible p-4 ${isUnlocked ? "glass-card" : "bg-white/5 opacity-60"}`}
+      className={`relative overflow-visible p-4 ${isUnlocked ? "glass-card" : "bg-foreground/5 opacity-60"}`}
       style={isUnlocked ? { boxShadow: `0 0 20px ${rarity.glow}` } : {}}
       data-testid={`achievement-card-${achievement.id}`}
     >
@@ -54,13 +54,13 @@ export function AchievementCard({ achievement, onShare, shareable = true }: Achi
           className={`p-3 rounded-xl bg-gradient-to-br ${rarity.bg}`}
           style={{ boxShadow: `0 0 12px ${rarity.glow}` }}
         >
-          <Icon className="w-6 h-6 text-white" />
+          <Icon className="w-6 h-6 text-foreground" />
         </div>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="font-semibold truncate">{achievement.title}</h3>
-            <span className={`text-xs px-1.5 py-0.5 rounded-full bg-gradient-to-r ${rarity.bg} text-white`}>
+            <span className={`text-xs px-1.5 py-0.5 rounded-full bg-gradient-to-r ${rarity.bg} text-foreground`}>
               {rarity.label}
             </span>
           </div>
@@ -68,7 +68,7 @@ export function AchievementCard({ achievement, onShare, shareable = true }: Achi
           
           {achievement.progress !== undefined && achievement.maxProgress && (
             <div className="mt-2">
-              <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div className="h-1.5 bg-foreground/10 rounded-full overflow-hidden">
                 <div 
                   className={`h-full bg-gradient-to-r ${rarity.bg} transition-all`}
                   style={{ width: `${(achievement.progress / achievement.maxProgress) * 100}%` }}
@@ -120,7 +120,7 @@ export function ShareableAchievementPreview({
   
   return (
     <div 
-      className="relative w-full max-w-md p-6 rounded-2xl bg-gradient-to-br from-[#0A0612] to-[#1a1025] border border-white/20"
+      className="relative w-full max-w-md p-6 rounded-2xl bg-gradient-to-br from-[#0A0612] to-[#1a1025] border border-foreground/20"
       style={{ boxShadow: `0 0 40px ${rarity.glow}` }}
       data-testid="shareable-achievement-preview"
     >
@@ -133,17 +133,17 @@ export function ShareableAchievementPreview({
           className={`p-4 rounded-2xl bg-gradient-to-br ${rarity.bg} mb-4`}
           style={{ boxShadow: `0 0 20px ${rarity.glow}` }}
         >
-          <Icon className="w-10 h-10 text-white" />
+          <Icon className="w-10 h-10 text-foreground" />
         </div>
         
-        <span className={`text-xs px-2 py-0.5 rounded-full bg-gradient-to-r ${rarity.bg} text-white mb-2`}>
+        <span className={`text-xs px-2 py-0.5 rounded-full bg-gradient-to-r ${rarity.bg} text-foreground mb-2`}>
           {rarity.label} Achievement
         </span>
         
         <h2 className="text-xl font-bold mb-1">{achievement.title}</h2>
         <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
         
-        <div className="w-full h-px bg-white/10 mb-4" />
+        <div className="w-full h-px bg-foreground/10 mb-4" />
         
         <div className="flex items-center justify-center gap-4 text-sm">
           <div>
@@ -152,7 +152,7 @@ export function ShareableAchievementPreview({
           </div>
           {performanceAge && (
             <>
-              <div className="w-px h-8 bg-white/10" />
+              <div className="w-px h-8 bg-foreground/10" />
               <div>
                 <p className="text-muted-foreground">Performance Age</p>
                 <p className="font-semibold text-brand-red">{performanceAge}</p>

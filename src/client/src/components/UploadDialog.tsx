@@ -198,11 +198,11 @@ export function UploadDialog({
             </div>
           ) : status === "emergency" ? (
             <div className="py-6 flex flex-col items-center">
-              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4">
-                <AlertCircle className="w-8 h-8 text-red-500" />
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+                <AlertCircle className="w-8 h-8 text-primary" />
               </div>
-              <p className="text-lg font-bold text-red-500 mb-4">Emergency Safety Notice</p>
-              <div className="bg-red-950 border-2 border-red-500 rounded-lg p-4 text-sm text-red-100 whitespace-pre-wrap max-h-64 overflow-y-auto">
+              <p className="text-lg font-bold text-primary mb-4">Emergency Safety Notice</p>
+              <div className="bg-red-950 border-2 border-primary rounded-lg p-4 text-sm text-primary whitespace-pre-wrap max-h-64 overflow-y-auto">
                 {emergencyMessage}
               </div>
               <Button

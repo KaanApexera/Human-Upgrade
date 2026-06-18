@@ -83,12 +83,12 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh]"
     >
       <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-background/60 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
         data-testid="command-palette-backdrop"
       />
-      <div className="relative w-full max-w-xl mx-4 glass-card border border-white/20 rounded-xl shadow-2xl overflow-hidden">
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+      <div className="relative w-full max-w-xl mx-4 glass-card border border-foreground/20 rounded-xl shadow-2xl overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-foreground/10">
           <Search className="w-5 h-5 text-muted-foreground" />
           <Command.Input
             value={search}
@@ -117,13 +117,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 key={item.label}
                 value={item.label}
                 onSelect={() => runCommand(item.action)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover-elevate data-[selected=true]:bg-white/10"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover-elevate data-[selected=true]:bg-foreground/10"
                 data-testid={`command-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 <item.icon className="w-4 h-4 text-muted-foreground" />
                 <span className="flex-1 text-foreground">{item.label}</span>
                 {item.shortcut && (
-                  <kbd className="px-1.5 py-0.5 text-xs bg-white/5 rounded border border-white/10 text-muted-foreground">
+                  <kbd className="px-1.5 py-0.5 text-xs bg-foreground/5 rounded border border-foreground/10 text-muted-foreground">
                     {item.shortcut}
                   </kbd>
                 )}
@@ -137,13 +137,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 key={item.label}
                 value={item.label}
                 onSelect={() => runCommand(item.action)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover-elevate data-[selected=true]:bg-white/10"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer hover-elevate data-[selected=true]:bg-foreground/10"
                 data-testid={`command-action-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 <item.icon className="w-4 h-4 text-muted-foreground" />
                 <span className="flex-1 text-foreground">{item.label}</span>
                 {item.shortcut && (
-                  <kbd className="px-1.5 py-0.5 text-xs bg-white/5 rounded border border-white/10 text-muted-foreground">
+                  <kbd className="px-1.5 py-0.5 text-xs bg-foreground/5 rounded border border-foreground/10 text-muted-foreground">
                     {item.shortcut}
                   </kbd>
                 )}
@@ -152,20 +152,20 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           </Command.Group>
         </Command.List>
 
-        <div className="flex items-center justify-between px-4 py-2 border-t border-white/10 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between px-4 py-2 border-t border-foreground/10 text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <kbd className="px-1 py-0.5 bg-white/5 rounded border border-white/10">↑</kbd>
-              <kbd className="px-1 py-0.5 bg-white/5 rounded border border-white/10">↓</kbd>
+              <kbd className="px-1 py-0.5 bg-foreground/5 rounded border border-foreground/10">↑</kbd>
+              <kbd className="px-1 py-0.5 bg-foreground/5 rounded border border-foreground/10">↓</kbd>
               <span>to navigate</span>
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1 py-0.5 bg-white/5 rounded border border-white/10">↵</kbd>
+              <kbd className="px-1 py-0.5 bg-foreground/5 rounded border border-foreground/10">↵</kbd>
               <span>to select</span>
             </span>
           </div>
           <span className="flex items-center gap-1">
-            <kbd className="px-1 py-0.5 bg-white/5 rounded border border-white/10">esc</kbd>
+            <kbd className="px-1 py-0.5 bg-foreground/5 rounded border border-foreground/10">esc</kbd>
             <span>to close</span>
           </span>
         </div>

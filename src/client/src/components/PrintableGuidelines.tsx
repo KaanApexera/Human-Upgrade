@@ -44,7 +44,7 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "bg-red-500/10 text-red-500 border-red-500/20";
+      case "high": return "bg-primary/10 text-primary border-primary/20";
       case "medium": return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
       case "low": return "bg-green-500/10 text-green-500 border-green-500/20";
       default: return "";
@@ -53,7 +53,7 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "critical": return "bg-red-500/10 text-red-500 border-red-500/20";
+      case "critical": return "bg-primary/10 text-primary border-primary/20";
       case "important": return "bg-orange-500/10 text-orange-500 border-orange-500/20";
       case "caution": return "bg-yellow-500/10 text-yellow-500 border-yellow-500/20";
       default: return "";
@@ -91,9 +91,9 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
       </div>
 
       {generateMutation.isError && (
-        <Card className="border-red-500/20 bg-red-500/5">
+        <Card className="border-primary/20 bg-primary/5">
           <CardContent className="pt-6">
-            <p className="text-red-500">Failed to generate guidelines. Please try again.</p>
+            <p className="text-primary">Failed to generate guidelines. Please try again.</p>
           </CardContent>
         </Card>
       )}
@@ -111,7 +111,7 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
       {generateMutation.isPending && (
         <Card>
           <CardContent className="py-12 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-red-500" />
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
             <p className="text-muted-foreground">Analyzing your biomarkers and generating personalized guidelines...</p>
           </CardContent>
         </Card>
@@ -148,9 +148,9 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
             </CardContent>
           </Card>
 
-          <Card className="border-red-500/20 print:break-inside-avoid">
+          <Card className="border-primary/20 print:break-inside-avoid">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-red-500">
+              <CardTitle className="flex items-center gap-2 text-primary">
                 <XCircle className="h-5 w-5" />
                 DON'Ts - Avoid These
               </CardTitle>
@@ -167,7 +167,7 @@ export function PrintableGuidelines({ existingData, onClose }: PrintableGuidelin
                   <ul className="space-y-1.5 pl-4">
                     {category.items.map((item, itemIdx) => (
                       <li key={itemIdx} className="flex items-start gap-2 text-sm">
-                        <XCircle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+                        <XCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                         <span>{item}</span>
                       </li>
                     ))}

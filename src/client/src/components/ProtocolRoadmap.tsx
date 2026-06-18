@@ -37,13 +37,13 @@ const DEFAULT_MILESTONES: RoadmapMilestone[] = [
 const STATUS_STYLES = {
   completed: { bg: "bg-emerald-500/20", border: "border-emerald-500/50", icon: "text-emerald-400", line: "bg-emerald-500" },
   current: { bg: "bg-blue-500/20", border: "border-blue-500/50", icon: "text-blue-400", line: "bg-blue-500" },
-  upcoming: { bg: "bg-white/5", border: "border-white/20", icon: "text-muted-foreground", line: "bg-white/20" },
-  locked: { bg: "bg-white/5", border: "border-white/10", icon: "text-muted-foreground/50", line: "bg-white/10" },
+  upcoming: { bg: "bg-foreground/5", border: "border-foreground/20", icon: "text-muted-foreground", line: "bg-foreground/20" },
+  locked: { bg: "bg-foreground/5", border: "border-foreground/10", icon: "text-muted-foreground/50", line: "bg-foreground/10" },
 };
 
 export function ProtocolRoadmap({ milestones = DEFAULT_MILESTONES, currentWeek = 3 }: ProtocolRoadmapProps) {
   return (
-    <Card className="glass-card border-white/10" data-testid="card-protocol-roadmap">
+    <Card className="glass-card border-foreground/10" data-testid="card-protocol-roadmap">
       <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2">
         <CardTitle className="text-lg flex items-center gap-2">
           <MapPin className="w-5 h-5 text-brand-red" />
@@ -95,7 +95,7 @@ export function ProtocolRoadmap({ milestones = DEFAULT_MILESTONES, currentWeek =
           })}
         </div>
         
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-foreground/10">
           <div className="text-sm">
             <span className="text-muted-foreground">Next milestone in </span>
             <span className="font-semibold text-blue-400">1 week</span>
@@ -118,11 +118,11 @@ export function MiniRoadmap({ currentPhase = 2, totalPhases = 5 }: { currentPhas
           <div 
             className={`w-3 h-3 rounded-full ${
               i < currentPhase ? "bg-emerald-500" : 
-              i === currentPhase ? "bg-blue-500" : "bg-white/20"
+              i === currentPhase ? "bg-blue-500" : "bg-foreground/20"
             }`}
           />
           {i < totalPhases - 1 && (
-            <div className={`w-6 h-0.5 ${i < currentPhase ? "bg-emerald-500" : "bg-white/20"}`} />
+            <div className={`w-6 h-0.5 ${i < currentPhase ? "bg-emerald-500" : "bg-foreground/20"}`} />
           )}
         </div>
       ))}
