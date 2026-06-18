@@ -89,7 +89,7 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "var(--font-sans)", "sans-serif"],
-        heading: ["Montserrat", "var(--font-heading)", "sans-serif"],
+        heading: ["Space Grotesk", "var(--font-heading)", "sans-serif"],
         mono: ["JetBrains Mono", "var(--font-mono)", "monospace"],
       },
       keyframes: {

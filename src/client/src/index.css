@@ -4,14 +4,14 @@
 
 /* Human Upgrade OS - Futuristic Biotech Design System */
 /* Brand Colors:
-   - Primary Red: #DC2626 (0 72% 51%)
+   - Primary Red: #DC2626 (6 64% 51%)
    - White: #FFFFFF
    - Landing Background: #0A0612 (deep black-violet)
    - Landing Gradient: #150F24 → #0A0612
    - Dashboard Background: #141414 (dark charcoal)
    - Card Background: #1e1e1e
-   - Border: #333333 (0 0% 20%)
-   - Muted Text: #a3a3a3 (0 0% 64%)
+   - Border: #333333 (32 9% 15%)
+   - Muted Text: #a3a3a3 (34 9% 56%)
    - Accent Purple: #7C3AED
 */
 
@@ -21,44 +21,44 @@
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
-  --background: 0 0% 8%;
-  --foreground: 0 0% 98%;
-  --border: 0 0% 20%;
-  --card: 0 0% 12%;
-  --card-foreground: 0 0% 98%;
-  --card-border: 0 0% 20%;
-  --sidebar: 0 0% 10%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-border: 0 0% 18%;
-  --sidebar-primary: 0 72% 51%;
+  --background: 28 14% 4%;
+  --foreground: 40 24% 93%;
+  --border: 32 9% 15%;
+  --card: 26 11% 7%;
+  --card-foreground: 40 24% 93%;
+  --card-border: 32 9% 15%;
+  --sidebar: 28 12% 5%;
+  --sidebar-foreground: 40 24% 93%;
+  --sidebar-border: 30 9% 12%;
+  --sidebar-primary: 6 64% 51%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 16%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-ring: 0 72% 51%;
-  --popover: 0 0% 14%;
-  --popover-foreground: 0 0% 98%;
-  --popover-border: 0 0% 20%;
-  --primary: 0 72% 51%;
+  --sidebar-accent: 30 9% 12%;
+  --sidebar-accent-foreground: 40 24% 93%;
+  --sidebar-ring: 6 64% 51%;
+  --popover: 26 11% 7%;
+  --popover-foreground: 40 24% 93%;
+  --popover-border: 32 9% 15%;
+  --primary: 6 64% 51%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 18%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 20%;
-  --muted-foreground: 0 0% 64%;
-  --accent: 0 72% 51%;
+  --secondary: 30 9% 12%;
+  --secondary-foreground: 40 24% 93%;
+  --muted: 32 9% 15%;
+  --muted-foreground: 34 9% 56%;
+  --accent: 6 64% 51%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 72% 51%;
+  --destructive: 6 64% 51%;
   --destructive-foreground: 0 0% 100%;
-  --input: 0 0% 18%;
-  --ring: 0 72% 51%;
-  --chart-1: 0 72% 51%;
+  --input: 30 9% 12%;
+  --ring: 6 64% 51%;
+  --chart-1: 6 64% 51%;
   --chart-2: 0 0% 70%;
   --chart-3: 0 50% 45%;
   --chart-4: 0 0% 50%;
   --chart-5: 0 0% 40%;
   --font-sans: 'Inter', sans-serif;
-  --font-heading: 'Montserrat', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-  --radius: 0.75rem;
+  --radius: 1rem;
   --shadow-2xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(0 0% 0% / 0.00);
   --shadow-sm: 0px 2px 0px 0px hsl(0 0% 0% / 0.00), 0px 1px 2px -1px hsl(0 0% 0% / 0.15);
@@ -99,7 +99,7 @@
   --opaque-button-border-intensity: -6;
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .07);
-  --background: 0 0% 98%;
+  --background: 40 24% 93%;
   --foreground: 0 0% 9%;
   --border: 0 0% 88%;
   --card: 0 0% 100%;
@@ -108,27 +108,27 @@
   --sidebar: 0 0% 96%;
   --sidebar-foreground: 0 0% 9%;
   --sidebar-border: 0 0% 88%;
-  --sidebar-primary: 0 72% 51%;
+  --sidebar-primary: 6 64% 51%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 0 0% 92%;
   --sidebar-accent-foreground: 0 0% 9%;
-  --sidebar-ring: 0 72% 51%;
+  --sidebar-ring: 6 64% 51%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 9%;
   --popover-border: 0 0% 88%;
-  --primary: 0 72% 51%;
+  --primary: 6 64% 51%;
   --primary-foreground: 0 0% 100%;
   --secondary: 0 0% 94%;
   --secondary-foreground: 0 0% 9%;
   --muted: 0 0% 94%;
   --muted-foreground: 0 0% 40%;
-  --accent: 0 72% 51%;
+  --accent: 6 64% 51%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 72% 51%;
+  --destructive: 6 64% 51%;
   --destructive-foreground: 0 0% 100%;
   --input: 0 0% 92%;
-  --ring: 0 72% 51%;
-  --chart-1: 0 72% 51%;
+  --ring: 6 64% 51%;
+  --chart-1: 6 64% 51%;
   --chart-2: 0 0% 40%;
   --chart-3: 0 50% 45%;
   --chart-4: 0 0% 55%;
@@ -150,36 +150,36 @@
   --opaque-button-border-intensity: 9;
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
-  --background: 0 0% 8%;
-  --foreground: 0 0% 98%;
-  --border: 0 0% 20%;
-  --card: 0 0% 12%;
-  --card-foreground: 0 0% 98%;
-  --card-border: 0 0% 20%;
-  --sidebar: 0 0% 10%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-border: 0 0% 18%;
-  --sidebar-primary: 0 72% 51%;
+  --background: 28 14% 4%;
+  --foreground: 40 24% 93%;
+  --border: 32 9% 15%;
+  --card: 26 11% 7%;
+  --card-foreground: 40 24% 93%;
+  --card-border: 32 9% 15%;
+  --sidebar: 28 12% 5%;
+  --sidebar-foreground: 40 24% 93%;
+  --sidebar-border: 30 9% 12%;
+  --sidebar-primary: 6 64% 51%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 16%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-ring: 0 72% 51%;
-  --popover: 0 0% 14%;
-  --popover-foreground: 0 0% 98%;
-  --popover-border: 0 0% 20%;
-  --primary: 0 72% 51%;
+  --sidebar-accent: 30 9% 12%;
+  --sidebar-accent-foreground: 40 24% 93%;
+  --sidebar-ring: 6 64% 51%;
+  --popover: 26 11% 7%;
+  --popover-foreground: 40 24% 93%;
+  --popover-border: 32 9% 15%;
+  --primary: 6 64% 51%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 18%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 20%;
-  --muted-foreground: 0 0% 64%;
-  --accent: 0 72% 51%;
+  --secondary: 30 9% 12%;
+  --secondary-foreground: 40 24% 93%;
+  --muted: 32 9% 15%;
+  --muted-foreground: 34 9% 56%;
+  --accent: 6 64% 51%;
   --accent-foreground: 0 0% 100%;
-  --destructive: 0 72% 51%;
+  --destructive: 6 64% 51%;
   --destructive-foreground: 0 0% 100%;
-  --input: 0 0% 18%;
-  --ring: 0 72% 51%;
-  --chart-1: 0 72% 51%;
+  --input: 30 9% 12%;
+  --ring: 6 64% 51%;
+  --chart-1: 6 64% 51%;
   --chart-2: 0 0% 70%;
   --chart-3: 0 50% 45%;
   --chart-4: 0 0% 50%;
@@ -321,7 +321,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(0 0% 10%);
+    background: hsl(28 12% 5%);
   }
 
   ::-webkit-scrollbar-thumb {

@@ -40,19 +40,17 @@ export function LogoSymbol({ size = 40, className = "" }: { size?: number; class
       data-testid="logo-symbol"
     >
       {/* Head */}
-      <circle cx="50" cy="18" r="13" fill="#FFFFFF" />
+      <circle cx="50" cy="26" r="12" fill="hsl(var(--foreground))" />
 
-      {/* Shoulders / upper body */}
-      <ellipse cx="50" cy="44" rx="28" ry="16" fill="#FFFFFF" />
+      {/* Shoulders — rounded form with a V-notch where the chest accent nests */}
+      <path d="M34 40 L66 40 A8 8 0 0 1 66 56 L57 56 L50 46 L43 56 L34 56 A8 8 0 0 1 34 40 Z" fill="hsl(var(--foreground))" />
 
       {/* Red triangle — chest accent */}
-      <path d="M50 34 L66 54 L34 54 Z" fill="#DC2626" />
+      <polygon points="50,47.5 58,57 42,57" fill="hsl(var(--primary))" />
 
-      {/* Left leg */}
-      <rect x="16" y="62" width="30" height="18" rx="9" fill="#FFFFFF" />
-
-      {/* Right leg */}
-      <rect x="54" y="62" width="30" height="18" rx="9" fill="#FFFFFF" />
+      {/* Legs — split capsule */}
+      <rect x="26" y="60" width="22" height="13" rx="6.5" fill="hsl(var(--foreground))" />
+      <rect x="52" y="60" width="22" height="13" rx="6.5" fill="hsl(var(--foreground))" />
     </svg>
   );
 }
