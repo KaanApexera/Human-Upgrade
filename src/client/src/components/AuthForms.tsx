@@ -61,10 +61,10 @@ function LeftPanel({ image, tagline, sub, bullets }: LeftPanelProps) {
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
       {/* gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/30" />
       {/* red accent glow */}
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-red-600/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
       {/* top logo */}
       <div className="relative z-10">
@@ -76,16 +76,16 @@ function LeftPanel({ image, tagline, sub, bullets }: LeftPanelProps) {
       {/* center content */}
       <div className="relative z-10 space-y-6">
         <div>
-          <h2 className="text-4xl font-bold text-white leading-tight">{tagline}</h2>
-          <p className="mt-3 text-white/60 text-base leading-relaxed">{sub}</p>
+          <h2 className="text-4xl font-bold text-foreground leading-tight">{tagline}</h2>
+          <p className="mt-3 text-foreground/60 text-base leading-relaxed">{sub}</p>
         </div>
         <div className="space-y-3">
           {bullets.map((b, i) => (
             <div key={i} className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center flex-shrink-0">
-                <span className="text-red-400 w-3.5 h-3.5">{b.icon}</span>
+              <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
+                <span className="text-primary w-3.5 h-3.5">{b.icon}</span>
               </div>
-              <span className="text-white/70 text-sm">{b.text}</span>
+              <span className="text-foreground/70 text-sm">{b.text}</span>
             </div>
           ))}
         </div>
@@ -93,8 +93,8 @@ function LeftPanel({ image, tagline, sub, bullets }: LeftPanelProps) {
 
       {/* bottom badge */}
       <div className="relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/50">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/5 border border-foreground/10 text-xs text-foreground/50">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           Beta — First 50 users · $1/month
         </div>
       </div>
@@ -105,13 +105,13 @@ function LeftPanel({ image, tagline, sub, bullets }: LeftPanelProps) {
 /* ── shared right panel wrapper ── */
 function RightPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex-1 lg:w-1/2 bg-[#080808] flex flex-col items-center justify-center p-6 sm:p-10 min-h-screen relative">
+    <div className="flex-1 lg:w-1/2 bg-background flex flex-col items-center justify-center p-6 sm:p-10 min-h-screen relative">
       {/* subtle top-right controls */}
       <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>
       {/* faint red glow top right */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute top-0 right-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <div className="relative z-10 w-full max-w-sm">{children}</div>
     </div>
   );
@@ -145,8 +145,8 @@ export function LoginForm({ onLogin, onGoogleAuth, isLoading, error }: AuthFormP
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-white/50 text-sm mt-1">Sign in to your dashboard</p>
+          <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
+          <p className="text-foreground/50 text-sm mt-1">Sign in to your dashboard</p>
         </div>
 
         <Form {...form}>
@@ -156,20 +156,20 @@ export function LoginForm({ onLogin, onGoogleAuth, isLoading, error }: AuthFormP
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Email</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
                       <Input
                         {...field}
                         type="email"
                         placeholder="you@example.com"
-                        className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50 focus:ring-red-500/20"
+                        className="pl-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50 focus:ring-primary/20"
                         data-testid="input-email"
                       />
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
@@ -179,35 +179,35 @@ export function LoginForm({ onLogin, onGoogleAuth, isLoading, error }: AuthFormP
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Password</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
                       <Input
                         {...field}
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50 focus:ring-red-500/20"
+                        className="pl-10 pr-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50 focus:ring-primary/20"
                         data-testid="input-password"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-foreground/60"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
 
-            {error && <p className="text-sm text-red-400 text-center">{error}</p>}
+            {error && <p className="text-sm text-primary text-center">{error}</p>}
 
             <div className="flex justify-end">
-              <a href="/forgot-password" className="text-xs text-red-400 hover:text-red-300" data-testid="link-forgot-password">
+              <a href="/forgot-password" className="text-xs text-primary hover:text-primary" data-testid="link-forgot-password">
                 Forgot password?
               </a>
             </div>
@@ -215,7 +215,7 @@ export function LoginForm({ onLogin, onGoogleAuth, isLoading, error }: AuthFormP
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-500 rounded-full font-semibold text-white"
+              className="w-full bg-primary hover:bg-primary rounded-full font-semibold text-foreground"
               data-testid="button-login"
             >
               {isLoading ? "Signing in..." : "Sign In"}
@@ -224,24 +224,24 @@ export function LoginForm({ onLogin, onGoogleAuth, isLoading, error }: AuthFormP
         </Form>
 
         <div className="my-6 flex items-center gap-3">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/30">or</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-foreground/10" />
+          <span className="text-xs text-foreground/30">or</span>
+          <div className="flex-1 h-px bg-foreground/10" />
         </div>
 
         <Button
           variant="outline"
           onClick={onGoogleAuth}
-          className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
+          className="w-full border-foreground/10 bg-foreground/5 text-foreground hover:bg-foreground/10 hover:text-foreground"
           data-testid="button-google-login"
         >
           <SiGoogle className="w-4 h-4 mr-2" />
           Continue with Google
         </Button>
 
-        <p className="text-center text-sm text-white/40 mt-6">
+        <p className="text-center text-sm text-foreground/40 mt-6">
           No account?{" "}
-          <a href="/register" className="text-red-400 hover:text-red-300" data-testid="link-register">
+          <a href="/register" className="text-primary hover:text-primary" data-testid="link-register">
             Sign up free
           </a>
         </p>
@@ -277,8 +277,8 @@ export function RegisterForm({ onRegister, onGoogleAuth, isLoading, error }: Aut
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">Create account</h1>
-          <p className="text-white/50 text-sm mt-1">Start optimizing your health today</p>
+          <h1 className="text-2xl font-bold text-foreground">Create account</h1>
+          <p className="text-foreground/50 text-sm mt-1">Start optimizing your health today</p>
         </div>
 
         <Form {...form}>
@@ -288,14 +288,14 @@ export function RegisterForm({ onRegister, onGoogleAuth, isLoading, error }: Aut
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Full Name</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Full Name</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                      <Input {...field} placeholder="John Doe" className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50" data-testid="input-name" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                      <Input {...field} placeholder="John Doe" className="pl-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50" data-testid="input-name" />
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
@@ -305,14 +305,14 @@ export function RegisterForm({ onRegister, onGoogleAuth, isLoading, error }: Aut
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Email</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                      <Input {...field} type="email" placeholder="you@example.com" className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50" data-testid="input-email" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                      <Input {...field} type="email" placeholder="you@example.com" className="pl-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50" data-testid="input-email" />
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
@@ -322,23 +322,23 @@ export function RegisterForm({ onRegister, onGoogleAuth, isLoading, error }: Aut
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Password</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
                       <Input
                         {...field}
                         type={showPassword ? "text" : "password"}
                         placeholder="Min. 8 characters"
-                        className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50"
+                        className="pl-10 pr-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50"
                         data-testid="input-password"
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/30 hover:text-foreground/60">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
@@ -348,49 +348,49 @@ export function RegisterForm({ onRegister, onGoogleAuth, isLoading, error }: Aut
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white/70 text-sm">Confirm Password</FormLabel>
+                  <FormLabel className="text-foreground/70 text-sm">Confirm Password</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                      <Input {...field} type="password" placeholder="••••••••" className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50" data-testid="input-confirm-password" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                      <Input {...field} type="password" placeholder="••••••••" className="pl-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50" data-testid="input-confirm-password" />
                     </div>
                   </FormControl>
-                  <FormMessage className="text-red-400 text-xs" />
+                  <FormMessage className="text-primary text-xs" />
                 </FormItem>
               )}
             />
 
-            {error && <p className="text-sm text-red-400 text-center">{error}</p>}
+            {error && <p className="text-sm text-primary text-center">{error}</p>}
 
-            <div className="flex items-start gap-2 text-xs text-white/40">
-              <input type="checkbox" id="medical-consent" required className="mt-0.5 accent-red-600 cursor-pointer" data-testid="checkbox-medical-consent" />
+            <div className="flex items-start gap-2 text-xs text-foreground/40">
+              <input type="checkbox" id="medical-consent" required className="mt-0.5 accent-primary cursor-pointer" data-testid="checkbox-medical-consent" />
               <label htmlFor="medical-consent" className="cursor-pointer leading-relaxed">
-                I understand Human Upgrade OS is <strong className="text-white/60">not a medical device</strong>. I agree to the{" "}
-                <a href="/terms" target="_blank" className="text-red-400 hover:underline">Terms</a> and{" "}
-                <a href="/privacy" target="_blank" className="text-red-400 hover:underline">Privacy Policy</a>.
+                I understand Human Upgrade OS is <strong className="text-foreground/60">not a medical device</strong>. I agree to the{" "}
+                <a href="/terms" target="_blank" className="text-primary hover:underline">Terms</a> and{" "}
+                <a href="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</a>.
               </label>
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full bg-red-600 hover:bg-red-500 rounded-full font-semibold text-white" data-testid="button-register">
+            <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary rounded-full font-semibold text-foreground" data-testid="button-register">
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
         </Form>
 
         <div className="my-6 flex items-center gap-3">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/30">or</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-foreground/10" />
+          <span className="text-xs text-foreground/30">or</span>
+          <div className="flex-1 h-px bg-foreground/10" />
         </div>
 
-        <Button variant="outline" onClick={onGoogleAuth} className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white" data-testid="button-google-register">
+        <Button variant="outline" onClick={onGoogleAuth} className="w-full border-foreground/10 bg-foreground/5 text-foreground hover:bg-foreground/10 hover:text-foreground" data-testid="button-google-register">
           <SiGoogle className="w-4 h-4 mr-2" />
           Continue with Google
         </Button>
 
-        <p className="text-center text-sm text-white/40 mt-6">
+        <p className="text-center text-sm text-foreground/40 mt-6">
           Already have an account?{" "}
-          <a href="/login" className="text-red-400 hover:text-red-300" data-testid="link-login">Sign in</a>
+          <a href="/login" className="text-primary hover:text-primary" data-testid="link-login">Sign in</a>
         </p>
       </RightPanel>
     </div>
@@ -431,8 +431,8 @@ export function ForgotPasswordForm({ onForgotPassword, isLoading, error }: AuthF
         {!submitted ? (
           <>
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-white">Reset password</h1>
-              <p className="text-white/50 text-sm mt-1">Enter your email and we'll send a reset link</p>
+              <h1 className="text-2xl font-bold text-foreground">Reset password</h1>
+              <p className="text-foreground/50 text-sm mt-1">Enter your email and we'll send a reset link</p>
             </div>
 
             <Form {...form}>
@@ -442,21 +442,21 @@ export function ForgotPasswordForm({ onForgotPassword, isLoading, error }: AuthF
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-white/70 text-sm">Email</FormLabel>
+                      <FormLabel className="text-foreground/70 text-sm">Email</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                          <Input {...field} type="email" placeholder="you@example.com" className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-white/20 focus:border-red-500/50" data-testid="input-email" />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                          <Input {...field} type="email" placeholder="you@example.com" className="pl-10 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/20 focus:border-primary/50" data-testid="input-email" />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-red-400 text-xs" />
+                      <FormMessage className="text-primary text-xs" />
                     </FormItem>
                   )}
                 />
 
-                {error && <p className="text-sm text-red-400 text-center">{error}</p>}
+                {error && <p className="text-sm text-primary text-center">{error}</p>}
 
-                <Button type="submit" disabled={isLoading} className="w-full bg-red-600 hover:bg-red-500 rounded-full font-semibold text-white" data-testid="button-reset-password">
+                <Button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primary rounded-full font-semibold text-foreground" data-testid="button-reset-password">
                   {isLoading ? "Sending..." : "Send Reset Link"}
                 </Button>
               </form>
@@ -464,19 +464,19 @@ export function ForgotPasswordForm({ onForgotPassword, isLoading, error }: AuthF
           </>
         ) : (
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-red-600/20 border border-red-500/30 flex items-center justify-center mx-auto">
-              <Mail className="w-8 h-8 text-red-400" />
+            <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto">
+              <Mail className="w-8 h-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-white">Check your email</h2>
-            <p className="text-white/50 text-sm leading-relaxed">
+            <h2 className="text-xl font-bold text-foreground">Check your email</h2>
+            <p className="text-foreground/50 text-sm leading-relaxed">
               We've sent a password reset link to your email. It may take a minute to arrive.
             </p>
           </div>
         )}
 
-        <p className="text-center text-sm text-white/40 mt-8">
+        <p className="text-center text-sm text-foreground/40 mt-8">
           Remember your password?{" "}
-          <a href="/login" className="text-red-400 hover:text-red-300" data-testid="link-login">Sign in</a>
+          <a href="/login" className="text-primary hover:text-primary" data-testid="link-login">Sign in</a>
         </p>
       </RightPanel>
     </div>
