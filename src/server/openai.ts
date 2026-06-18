@@ -1,9 +1,58 @@
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import type { Biomarker } from "@shared/schema";
 import { formatPeptideKnowledgeForPrompt } from "./peptideKnowledge";
 
-// Using gpt-4o for biomarker analysis and protocol generation
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Claude (Anthropic) powers biomarker analysis and protocol generation.
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const CLAUDE_MODEL = process.env.CLAUDE_MODEL || "claude-opus-4-8";
+
+// Pull a clean JSON object out of a model response (strips code fences / stray prose).
+function extractJson(raw: string): string {
+  let t = raw.trim();
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) t = fence[1].trim();
+  const first = t.indexOf("{");
+  const last = t.lastIndexOf("}");
+  if (first !== -1 && last !== -1 && last > first) t = t.slice(first, last + 1);
+  return t;
+}
+
+/**
+ * Single entry point for Claude completions.
+ * Replaces openai.chat.completions.create — system prompt is a top-level param,
+ * JSON mode is enforced by instruction + parsing (Claude has no response_format),
+ * and we stream to avoid HTTP timeouts on long generations.
+ */
+async function claudeComplete(opts: {
+  system: string;
+  user: string;
+  maxTokens: number;
+  json?: boolean;
+}): Promise<string> {
+  const system = opts.json
+    ? `${opts.system}\n\nIMPORTANT: Respond with ONLY a single valid JSON object. No markdown, no code fences, and no commentary before or after the JSON.`
+    : opts.system;
+
+  const stream = anthropic.messages.stream({
+    model: CLAUDE_MODEL,
+    max_tokens: opts.maxTokens,
+    system,
+    messages: [{ role: "user", content: opts.user }],
+  });
+  const message = await stream.finalMessage();
+
+  if (message.stop_reason === "max_tokens") {
+    console.warn("Claude response hit max_tokens — output may be truncated.");
+  }
+
+  const text = message.content
+    .filter((b): b is Anthropic.TextBlock => b.type === "text")
+    .map((b) => b.text)
+    .join("")
+    .trim();
+
+  return opts.json ? extractJson(text) : text;
+}
 
 // Red Flags - Emergency symptoms that require immediate medical attention
 // When detected, the system should NOT generate advice and instead show emergency guidance
@@ -126,16 +175,13 @@ ${context?.protocol ? `User's Current Protocol: The user has an active personali
 ${context?.biomarkers ? `User has uploaded biomarker data for analysis.` : ''}`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message }
-      ],
-      max_tokens: 900,
+    const content = await claudeComplete({
+      system: systemPrompt,
+      user: message,
+      maxTokens: 900,
     });
 
-    return response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response. Please try again.";
+    return content || "I'm sorry, I couldn't generate a response. Please try again.";
   } catch (error) {
     console.error("Chat AI error:", error);
     throw new Error("Failed to process chat message");
@@ -693,39 +739,26 @@ Generate a complete analysis in JSON format with the following structure:
 Respond with valid JSON only.`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are a health optimization expert AI. Always respond with valid JSON matching the requested structure. Be specific, evidence-based, and actionable in your recommendations."
-        },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 16000,
+    const content = await claudeComplete({
+      system: "You are a health optimization expert AI. Always respond with valid JSON matching the requested structure. Be specific, evidence-based, and actionable in your recommendations.",
+      user: prompt,
+      maxTokens: 16000,
+      json: true,
     });
-
-    const content = response.choices[0].message.content;
     if (!content) {
-      throw new Error("Empty response from OpenAI");
-    }
-
-    const finishReason = response.choices[0].finish_reason;
-    if (finishReason === "length") {
-      console.error("OpenAI response was truncated due to token limit - attempting to parse partial response");
+      throw new Error("Empty response from Claude");
     }
 
     return JSON.parse(content) as AnalysisResult;
   } catch (error: any) {
-    console.error("OpenAI analysis error:", error?.message || error);
-    if (error?.status === 401 || error?.code === "invalid_api_key") {
-      throw new Error("OpenAI API key is invalid or missing. Please check your configuration.");
+    console.error("Claude analysis error:", error?.message || error);
+    if (error?.status === 401) {
+      throw new Error("Anthropic API key is invalid or missing. Please check your configuration.");
     }
     if (error?.status === 429) {
-      throw new Error("OpenAI rate limit exceeded. Please wait a moment and try again.");
+      throw new Error("Claude rate limit exceeded. Please wait a moment and try again.");
     }
-    throw new Error(`Analysis failed: ${error?.message || "Unknown OpenAI error"}. Please try again.`);
+    throw new Error(`Analysis failed: ${error?.message || "Unknown Claude error"}. Please try again.`);
   }
 }
 
@@ -861,20 +894,12 @@ Example response format:
 {"biomarkers": [{"name": "Testosterone", "value": 450, "unit": "ng/dL", "category": "hormone", "status": "normal"}]}`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert medical lab report parser specializing in extracting biomarkers from any format of lab report. You can handle messy OCR text, various international formats, tables, and unstructured data. Extract every biomarker you can identify. Always respond with valid JSON containing a biomarkers array."
-        },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 4096,
+    const content = await claudeComplete({
+      system: "You are an expert medical lab report parser specializing in extracting biomarkers from any format of lab report. You can handle messy OCR text, various international formats, tables, and unstructured data. Extract every biomarker you can identify. Always respond with valid JSON containing a biomarkers array.",
+      user: prompt,
+      maxTokens: 4096,
+      json: true,
     });
-
-    const content = response.choices[0].message.content;
     if (!content) return [];
 
     const parsed = JSON.parse(content);
@@ -1079,20 +1104,12 @@ Categories should include: Nutrition, Exercise, Sleep, Supplements, Lifestyle, S
 - Each category should have 3-5 specific items`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are a health optimization expert. Generate personalized, actionable do's and don'ts based on biomarker data. Always respond with valid JSON."
-        },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 2048,
+    const content = await claudeComplete({
+      system: "You are a health optimization expert. Generate personalized, actionable do's and don'ts based on biomarker data. Always respond with valid JSON.",
+      user: prompt,
+      maxTokens: 2048,
+      json: true,
     });
-
-    const content = response.choices[0].message.content;
     if (!content) throw new Error("No response from AI");
 
     const parsed = JSON.parse(content);
@@ -1240,20 +1257,12 @@ Include 3-5 peptide recommendations tailored to their biomarkers and goals.
 Peptides to consider: BPC-157, TB-500, Ipamorelin, CJC-1295, Sermorelin, NAD+, MOTS-c, Epithalon, Thymosin Alpha-1, SS-31`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert in hormone optimization and peptide therapy. Generate evidence-based, personalized cycle recommendations. Always prioritize safety and include appropriate disclaimers. NEVER recommend TRT dosages above 200mg/week. Always respond with valid JSON."
-        },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 3000,
+    const content = await claudeComplete({
+      system: "You are an expert in hormone optimization and peptide therapy. Generate evidence-based, personalized cycle recommendations. Always prioritize safety and include appropriate disclaimers. NEVER recommend TRT dosages above 200mg/week. Always respond with valid JSON.",
+      user: prompt,
+      maxTokens: 3000,
+      json: true,
     });
-
-    const content = response.choices[0].message.content;
     if (!content) throw new Error("No response from AI");
 
     const parsed = JSON.parse(content);
@@ -1406,17 +1415,12 @@ Key principles:
 - Focus on lifestyle, movement, nutrition, and recovery`;
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are a precision health optimization coach that creates personalized daily routines based on wearable data. Always respond with valid JSON only." },
-        { role: "user", content: prompt }
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 2000,
+    const content = await claudeComplete({
+      system: "You are a precision health optimization coach that creates personalized daily routines based on wearable data. Always respond with valid JSON only.",
+      user: prompt,
+      maxTokens: 2000,
+      json: true,
     });
-
-    const content = response.choices[0].message.content;
     if (!content) throw new Error("No response from AI");
 
     const routine = JSON.parse(content);

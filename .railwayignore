@@ -1,0 +1,14 @@
+design-preview/
+*.mjs
+*.log
+src/node_modules/
+node_modules/
+.git/
+.env
+**/.env
+*.tar.gz
+*.sql
+SETUP.md
+import-*.mjs
+fix-railway-vars.mjs
+apply-indexes.mjs

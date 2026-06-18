@@ -1,0 +1,7 @@
+
+# local ops helpers (contain secrets) — never commit
+/apply-indexes.mjs
+/import-full.mjs
+/fix-railway-vars.mjs
+/set-stripe.mjs
+design-preview/
