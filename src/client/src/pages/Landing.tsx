@@ -1,653 +1,445 @@
-import { useState } from "react";
-import { useLocation, Link, Redirect } from "wouter";
+import { useState, useEffect, useRef } from "react";
+import { useLocation, Redirect } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@shared/schema";
-import { Logo } from "@/components/Logo";
-import {
-  ChevronRight,
-  Check,
-  Star,
-  Zap,
-  ArrowDown,
-  Battery,
-  Brain,
-  Flame,
-  Moon,
-  TrendingDown,
-  Clock,
-  Activity,
-  Shield,
-  Dna,
-  FlaskConical,
-} from "lucide-react";
-import { SiInstagram, SiTiktok } from "react-icons/si";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1920&q=85&fit=crop";
+const GOALS: Record<string, { label: string; sum: string; img: string; nutri: string[]; train: string[]; rout: string[] }> = {
+  longevity: {
+    label: "Longevity", sum: "Rebuild your body to age slower.", img: "/redesign/goal-longevity.png",
+    nutri: ["Mediterranean base · 30g+ fiber daily", "Protein 1.6g/kg · 10-hour eating window", "Omega-3, magnesium & vitamin D stack"],
+    train: ["Zone 2 cardio · 150 min / week", "2× full-body strength sessions", "VO₂max intervals · 1× / week"],
+    rout: ["7.5–9h sleep · fixed wake time", "Morning light + cold exposure", "Screens off 60 min before bed"],
+  },
+  fatloss: {
+    label: "Fat loss", sum: "Drop fat without wrecking metabolism.", img: "/redesign/goal-fatloss.png",
+    nutri: ["300–500 kcal deficit · protein 2g/kg", "High-volume veg · low-GI carbs", "16:8 fasting · no late-night snacking"],
+    train: ["3–4× strength · progressive overload", "8–12k steps daily (NEAT)", "2× short HIIT finishers"],
+    rout: ["7–8h sleep to protect leptin", "3L water + electrolytes", "Weekly weigh-in & waist check"],
+  },
+  strength: {
+    label: "Strength & muscle", sum: "Add muscle and raw strength.", img: "/redesign/goal-strength.png",
+    nutri: ["Slight surplus · protein 2.2g/kg", "Carbs around training · 4–6g/kg", "Creatine 5g every day"],
+    train: ["4–5× hypertrophy + heavy compounds", "10–20 sets / muscle / week · RPE 7–9", "Deload every 6–8 weeks"],
+    rout: ["8–9h sleep for recovery", "Pre-sleep slow protein", "Mobility & soft-tissue · 10 min/day"],
+  },
+  energy: {
+    label: "Energy & focus", sum: "Stable energy and sharper focus.", img: "/redesign/goal-energy.png",
+    nutri: ["Protein + fat breakfast · stable glucose", "Cut refined sugar & alcohol", "B-vitamins, electrolytes, L-theanine"],
+    train: ["Daily 20–30 min brisk movement", "2× short strength circuits", "Breathwork + Zone 2"],
+    rout: ["Consistent sleep/wake · ±30 min", "10 min morning sunlight", "90-min deep-work focus blocks"],
+  },
+};
 
-const SPLIT_IMAGE =
-  "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&q=80&fit=crop&crop=center";
+const FAQS = [
+  ["Do I need a special lab test?", "No. Upload any standard blood panel you already have — a PDF or even a phone photo. Our AI reads it in seconds."],
+  ["How are my plans personalized?", "We map your biomarkers, wearables and chosen goal into a nutrition, training and routine plan — then re-tune it weekly as new data arrives."],
+  ["Are the protocols safe?", "Every recommendation is evidence-based and flags anything that needs a doctor. We never advise on emergency or red-flag symptoms — we route you to care."],
+  ["What happens to my data?", "It's yours. Encrypted at rest, never sold, fully deletable at any time from settings."],
+];
 
-const LIFESTYLE_IMAGE =
-  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80&fit=crop";
+function Helix() {
+  const ref = useRef<HTMLCanvasElement | null>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let raf = 0;
+    let w = 0, h = 0;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function resize() {
+      w = canvas!.clientWidth; h = canvas!.clientHeight;
+      canvas!.width = w * dpr; canvas!.height = h * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    let mx = 0;
+    const onMove = (e: MouseEvent) => { mx = (e.clientX / window.innerWidth - 0.5); };
+    window.addEventListener("mousemove", onMove);
+    const N = 130, turns = 4.5;
+    const start = performance.now();
+    function frame(now: number) {
+      const t = reduce ? 0 : (now - start) / 1000;
+      ctx!.clearRect(0, 0, w, h);
+      ctx!.globalCompositeOperation = "lighter";
+      const cx = w / 2 + mx * 40, cy = h / 2;
+      const amp = Math.min(w, 720) * 0.26, span = h * 0.92;
+      const pts: { x: number; y: number; z: number; c: string }[] = [];
+      for (let i = 0; i < N; i++) {
+        const p = i / (N - 1);
+        const ang = p * Math.PI * 2 * turns + t * 0.9;
+        const y = cy - span / 2 + p * span;
+        pts.push({ x: cx + Math.cos(ang) * amp, y, z: Math.sin(ang), c: "212,63,48" });
+        pts.push({ x: cx + Math.cos(ang + Math.PI) * amp, y, z: Math.sin(ang + Math.PI), c: "237,231,221" });
+        if (i % 3 === 0) {
+          ctx!.strokeStyle = "rgba(212,63,48,0.10)";
+          ctx!.lineWidth = 1;
+          ctx!.beginPath();
+          ctx!.moveTo(cx + Math.cos(ang) * amp, y);
+          ctx!.lineTo(cx + Math.cos(ang + Math.PI) * amp, y);
+          ctx!.stroke();
+        }
+      }
+      pts.sort((a, b) => a.z - b.z);
+      for (const pt of pts) {
+        const depth = (pt.z + 1) / 2;
+        const r = 1.6 + depth * 3.4;
+        const a = 0.18 + depth * 0.62;
+        const grd = ctx!.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r * 3.2);
+        grd.addColorStop(0, `rgba(${pt.c},${a})`);
+        grd.addColorStop(1, `rgba(${pt.c},0)`);
+        ctx!.fillStyle = grd;
+        ctx!.beginPath();
+        ctx!.arc(pt.x, pt.y, r * 3.2, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+      ctx!.globalCompositeOperation = "source-over";
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); window.removeEventListener("mousemove", onMove); };
+  }, []);
+  return <canvas ref={ref} className="hl-canvas" aria-hidden="true" />;
+}
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false);
+function scrollToId(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+}
+
+function Mark({ className = "hl-mark" }: { className?: string }) {
   return (
-    <div className="border border-white/[0.08] rounded-xl overflow-hidden transition-all duration-200 hover:border-white/[0.12]">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-white/[0.03] transition-colors"
-      >
-        <span className="text-white font-medium text-sm sm:text-base pr-4">{question}</span>
-        <span className={`text-red-500 text-xl flex-shrink-0 transition-transform duration-200 ${open ? "rotate-45" : ""}`}>+</span>
-      </button>
-      {open && (
-        <div className="px-6 pb-5 border-t border-white/[0.06]">
-          <p className="text-white/50 text-sm leading-relaxed pt-4">{answer}</p>
-        </div>
-      )}
-    </div>
+    <svg className={className} viewBox="0 0 100 74" aria-hidden="true">
+      <circle cx="50" cy="13" r="12" fill="hsl(var(--foreground))" />
+      <path d="M34 27 L66 27 A8 8 0 0 1 66 43 L57 43 L50 33 L43 43 L34 43 A8 8 0 0 1 34 27 Z" fill="hsl(var(--foreground))" />
+      <polygon points="50,34.5 58,44 42,44" fill="hsl(var(--primary))" />
+      <rect x="26" y="47" width="22" height="13" rx="6.5" fill="hsl(var(--foreground))" />
+      <rect x="52" y="47" width="22" height="13" rx="6.5" fill="hsl(var(--foreground))" />
+    </svg>
   );
 }
 
 export default function Landing() {
   const [, setLocation] = useLocation();
   const { data: user, isLoading } = useQuery<User>({ queryKey: ["/api/user"] });
+  const [goal, setGoal] = useState<keyof typeof GOALS>("longevity");
+  const [faq, setFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: 0.15 });
+    document.querySelectorAll(".hl .rev").forEach((el) => io.observe(el));
+    const t = setTimeout(() => document.querySelector(".hl")?.classList.add("ready"), 60);
+    return () => { io.disconnect(); clearTimeout(t); };
+  }, []);
 
   if (!isLoading && user) return <Redirect to="/dashboard" />;
+  const g = GOALS[goal];
+  const arrow = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
+  const check = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" width="17" height="17"><path d="M5 12l5 5L20 6" /></svg>;
 
   return (
-    <div className="bg-[#080808] text-white min-h-screen overflow-x-hidden">
+    <div className="hl">
+      <style>{CSS}</style>
 
-      {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/[0.04] bg-[#080808]/80 backdrop-blur-md">
-        <Link href="/" className="cursor-pointer">
-          <Logo size="md" />
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          {["How it works", "Pricing", "FAQ"].map((item) => (
-            <button
-              key={item}
-              onClick={() => document.getElementById(item.toLowerCase().replace(/ /g, "-"))?.scrollIntoView({ behavior: "smooth" })}
-              className="text-white/50 hover:text-white text-sm transition-colors"
-            >
-              {item}
-            </button>
-          ))}
+      <nav className="hl-nav">
+        <div className="hl-brand"><Mark />HUMAN&nbsp;UPGRADE</div>
+        <div className="hl-links">
+          <a onClick={() => scrollToId("discover")}>Method</a>
+          <a onClick={() => scrollToId("goals")}>Plans</a>
+          <a onClick={() => scrollToId("pricing")}>Access</a>
         </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setLocation("/login")} className="text-white/60 hover:text-white text-sm font-medium transition-colors px-4 py-2">
-            Log in
-          </button>
-          <button
-            onClick={() => setLocation("/register")}
-            className="bg-red-600 hover:bg-red-500 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 shadow-[0_0_20px_rgba(220,38,38,0.3)]"
-          >
-            Start free →
-          </button>
-        </div>
+        <button className="hl-pill" onClick={() => setLocation("/register")}>Start free {arrow}</button>
       </nav>
 
-      {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-end pb-20 pt-20">
-        {/* Background */}
-        <div className="absolute inset-0">
-          <img src={HERO_IMAGE} alt="Biology lab" className="w-full h-full object-cover object-center" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080808] via-[#080808]/75 to-[#080808]/40" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/80 via-transparent to-transparent" />
+      <header className="hl-hero">
+        <Helix />
+        <div className="hl-vign" />
+        <div className="hl-eyebrow"><span className="hl-dot" />Beta — first 50 humans · $1/month</div>
+        <h1 className="hl-h1">
+          <span className="ln"><span className="w">Feel</span> <span className="w">decades</span></span>
+          <span className="ln"><span className="w grad">younger.</span></span>
+        </h1>
+        <p className="hl-sub">Upload any blood test. Our longevity engine reads 50+ biomarkers and engineers your nutrition, training and daily routine to reverse your biological age.</p>
+        <div className="hl-ctas">
+          <button className="hl-btn" onClick={() => setLocation("/register")}>Get my biological age {arrow}</button>
+          <button className="hl-btn alt" onClick={() => scrollToId("discover")}>Watch the science</button>
         </div>
-
-        {/* Red glow orbs */}
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-red-600/10 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full bg-red-500/8 blur-[80px] pointer-events-none" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-          <div className="max-w-2xl">
-            {/* Badges */}
-            <div className="flex flex-wrap items-center gap-3 mb-8">
-              <button
-                onClick={() => setLocation("/register?plan=beta_monthly")}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-xs font-bold text-red-400 backdrop-blur-sm hover:bg-red-600/30 transition-colors cursor-pointer"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-                BETA — First 50 Users Only
-              </button>
-              <button
-                onClick={() => setLocation("/register?plan=beta_monthly")}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/8 border border-white/15 text-xs font-medium text-white/60 backdrop-blur-sm hover:bg-white/15 transition-colors cursor-pointer"
-              >
-                ⚡ Full Access · $1/month
-              </button>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.02] tracking-tight mb-6">
-              Look younger.<br />
-              Feel unstoppable.<br />
-              <span className="text-red-500 relative">
-                Be your best.
-                <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-red-500 to-transparent opacity-40" />
-              </span>
-            </h1>
-
-            <p className="text-lg sm:text-xl text-white/55 max-w-xl leading-relaxed mb-10">
-              Upload your blood test. In 60 seconds, discover exactly why you're tired, gaining weight, or aging faster than you should — and get the precise plan to fix it.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <button
-                onClick={() => setLocation("/register")}
-                className="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-8 py-4 rounded-full text-base transition-all duration-200 shadow-[0_0_40px_rgba(220,38,38,0.35)] hover:shadow-[0_0_60px_rgba(220,38,38,0.45)]"
-              >
-                Start for Free
-                <ChevronRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
-                className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 text-white font-medium px-8 py-4 rounded-full text-base transition-all duration-200 backdrop-blur-sm"
-              >
-                See how it works
-                <ArrowDown className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Floating stats */}
-            <div className="flex flex-wrap items-center gap-6">
-              {[
-                { value: "60s", label: "To get results" },
-                { value: "8+", label: "Years younger avg" },
-                { value: "$1", label: "Beta price/month" },
-              ].map(({ value, label }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <div className="text-2xl font-bold text-red-400">{value}</div>
-                  <div className="text-xs text-white/40 leading-tight">{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="hl-meta">
+          <span>BIO-AGE ENGINE · v2.4</span>
+          <span className="sc"><i />SCROLL</span>
+          <span>50+ MARKERS DECODED</span>
         </div>
+      </header>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30">
-          <div className="w-px h-10 bg-gradient-to-b from-white to-transparent animate-pulse" />
+      <div className="hl-marq"><div className="row">{Array(2).fill(0).map((_, k) => (
+        <span key={k}>{["LONGEVITY", "NUTRITION", "TRAINING", "BIO-AGE", "ROUTINES", "PEPTIDES"].map((x, i) => (
+          <span key={i}><span className={i % 2 ? "o" : ""}>{x}</span><span className="star">✦</span></span>
+        ))}</span>
+      ))}</div></div>
+
+      <section className="hl-sec">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">The thesis</p>
+          <p className="hl-manif rev">Aging is <span className="grad">data.</span> And data can be <span className="gradc">rewritten.</span> <b>We turn your bloodwork into nutrition, workouts and routines that make your body younger — every single day.</b></p>
         </div>
       </section>
 
-      {/* ── PAIN POINTS ── */}
-      <section className="border-y border-white/[0.06] py-14 bg-white/[0.01]">
-        <div className="max-w-5xl mx-auto px-6">
-          <p className="text-center text-white/30 text-xs mb-8 uppercase tracking-[0.3em] font-semibold">Sound familiar?</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {[
-              { icon: Battery, text: "Always tired, even after sleep" },
-              { icon: TrendingDown, text: "Can't lose weight no matter what" },
-              { icon: Brain, text: "Brain fog and lack of focus" },
-              { icon: Flame, text: "Low motivation and energy" },
-              { icon: Moon, text: "Poor sleep quality" },
-              { icon: Clock, text: "Feeling older than your age" },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-3 p-4 rounded-xl border border-white/[0.05] bg-white/[0.02] hover:border-red-500/20 hover:bg-red-500/[0.03] transition-all duration-200 group">
-                <Icon className="w-4 h-4 text-red-500/60 flex-shrink-0 group-hover:text-red-500 transition-colors" />
-                <span className="text-white/45 text-sm group-hover:text-white/60 transition-colors">{text}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-white/55 text-base mt-8">
-            These aren't signs of getting old — they're signals. Your blood test <span className="text-white font-semibold">already has the answers.</span>
-          </p>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-28 max-w-7xl mx-auto px-6">
-        <div className="text-center mb-20">
-          <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">How It Works</p>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight">
-            From blood test to
-            <br />
-            <span className="text-white/40">transformation plan</span>
-          </h2>
-          <p className="text-white/35 mt-4 text-lg max-w-xl mx-auto">No appointments. No expensive labs. Just upload what you have.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-          {/* connecting line */}
-          <div className="hidden md:block absolute top-12 left-1/3 right-1/3 h-px bg-gradient-to-r from-red-500/20 via-red-500/40 to-red-500/20" />
-          {[
-            {
-              step: "01",
-              emoji: "📋",
-              title: "Upload Your Blood Test",
-              desc: "Take a photo or upload the PDF from your last checkup. Any standard blood test works — from your doctor, a pharmacy, or a home test kit.",
-            },
-            {
-              step: "02",
-              emoji: "🧬",
-              title: "Get Your Biological Age",
-              desc: "Our AI analyzes 50+ biomarkers and tells you your real biological age — how old your body actually functions inside. Most people are surprised.",
-            },
-            {
-              step: "03",
-              emoji: "🚀",
-              title: "Follow Your Personal Plan",
-              desc: "Get your exact daily protocol — peptides, nutrition, supplements, sleep optimization — all based on your unique blood values.",
-            },
-          ].map((item, i) => (
-            <div
-              key={item.step}
-              className="relative p-8 rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:bg-white/[0.04] hover:border-red-500/20 transition-all duration-300 group"
-            >
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/0 to-transparent group-hover:via-red-500/30 transition-all duration-300" />
-              <div className="text-7xl font-black text-white/[0.03] absolute top-4 right-5 font-mono select-none">{item.step}</div>
-              <div className="text-4xl mb-5">{item.emoji}</div>
-              <h3 className="text-lg font-semibold mb-3 text-white">{item.title}</h3>
-              <p className="text-white/45 leading-relaxed text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── PEPTIDE / LONGEVITY SECTION ── */}
-      <section className="py-24 border-t border-white/[0.06] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(220,38,38,0.06)_0%,transparent_60%)]" />
-        <div className="max-w-7xl mx-auto px-6 relative">
-          <div className="text-center mb-16">
-            <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Longevity Science</p>
-            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-              Live longer.
-              <br />
-              <span className="text-white/40">Feel decades younger.</span>
-            </h2>
-            <p className="text-white/45 text-lg max-w-2xl mx-auto">
-              We combine your blood data with cutting-edge longevity science — including peptide protocols used by the world's top biohackers.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
-            {[
-              {
-                icon: Dna,
-                title: "Peptide Protocols",
-                desc: "Science-backed peptide recommendations (BPC-157, TB-500, GHK-Cu) tailored to your biomarkers for repair, recovery, and longevity.",
-              },
-              {
-                icon: Activity,
-                title: "Biological Age Score",
-                desc: "Track your real age at the cellular level. See it drop as you follow your personalized plan. Most users reduce it by 3–8 years.",
-              },
-              {
-                icon: FlaskConical,
-                title: "Hormone Optimization",
-                desc: "Testosterone, cortisol, thyroid, insulin — we decode every hormone in your blood and give you exact steps to bring them to optimal.",
-              },
-              {
-                icon: Shield,
-                title: "Longevity Protocol",
-                desc: "Sleep, fasting, supplementation, and movement protocols built from your blood data. The same approach used by Bryan Johnson and top longevity researchers.",
-              },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="p-6 rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:border-red-500/25 hover:bg-red-500/[0.03] transition-all duration-300 group">
-                <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4 group-hover:bg-red-500/15 transition-colors">
-                  <Icon className="w-5 h-5 text-red-400" />
-                </div>
-                <h3 className="text-white font-semibold mb-2 text-sm">{title}</h3>
-                <p className="text-white/40 text-xs leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Longevity stat bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
-            {[
-              { value: "50+", label: "Biomarkers analyzed" },
-              { value: "3–8", label: "Years younger avg" },
-              { value: "90", label: "Days to see results" },
-              { value: "97%", label: "Savings vs $29 plan" },
-            ].map(({ value, label }) => (
-              <div key={label} className="bg-[#0a0a0a] p-6 text-center hover:bg-white/[0.02] transition-colors">
-                <div className="text-3xl font-black text-red-400 mb-1">{value}</div>
-                <div className="text-white/35 text-xs uppercase tracking-widest">{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── BENEFITS SPLIT ── */}
-      <section className="py-20 border-t border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="relative rounded-2xl overflow-hidden h-[500px] lg:h-[580px] group">
-              <img src={SPLIT_IMAGE} alt="Transformation" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/90 via-[#080808]/20 to-transparent" />
-              {/* Biological age card */}
-              <div className="absolute bottom-6 left-6 right-6 p-5 rounded-2xl bg-black/80 border border-white/10 backdrop-blur-md">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-white/40 text-xs uppercase tracking-widest">Biological Age</p>
-                  <span className="text-green-400 text-xs font-semibold bg-green-400/10 px-2 py-0.5 rounded-full">↓ 8 years younger</span>
-                </div>
-                <div className="text-6xl font-black text-red-500 mb-1 leading-none">32</div>
-                <p className="text-white/35 text-xs mb-3">Chronological age: 40 · Body age: 32</p>
-                <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                  <div className="h-full w-[80%] rounded-full bg-gradient-to-r from-red-700 to-red-400" />
-                </div>
-              </div>
-            </div>
-
+      <section className="hl-sec" id="discover">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">What you'll discover</p>
+          <h2 className="hl-st rev">Your body,<br /><span className="gradc">fully decoded.</span></h2>
+          <div className="hl-split">
+            <div className="hl-fig rev"><img src="/redesign/helix.png" alt="" /><div className="ov" /><div className="cap"><b>LIVE</b> · biological age engine · −8 yrs reversed</div></div>
             <div>
-              <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">What You'll Discover</p>
-              <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-                Your body knows
-                <br />the answers.
-              </h2>
-              <p className="text-white/45 text-lg leading-relaxed mb-10">
-                Your blood test contains everything — why you're tired, why weight won't move, why you're aging faster. We read it all and give you the exact protocol to fix it.
-              </p>
-              <div className="space-y-3">
-                {[
-                  "Why your energy crashes every afternoon",
-                  "The real reason the weight won't come off",
-                  "Which peptides your body actually needs",
-                  "Why your sleep never feels restorative",
-                  "What's making you age faster than your peers",
-                  "How to feel 10 years younger in 90 days",
-                ].map((feat) => (
-                  <div key={feat} className="flex items-center gap-3 text-white/65">
-                    <div className="w-5 h-5 rounded-full bg-red-600/15 border border-red-500/25 flex items-center justify-center flex-shrink-0">
-                      <Check className="w-3 h-3 text-red-400" />
-                    </div>
-                    <span className="text-sm">{feat}</span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => setLocation("/register")}
-                className="mt-10 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold px-7 py-3.5 rounded-full text-sm transition-all duration-200 shadow-[0_0_25px_rgba(220,38,38,0.25)]"
-              >
-                Discover My Results
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PERSONALIZED PLAN SPLIT ── */}
-      <section className="py-20 border-t border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Your Daily Plan</p>
-              <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-                Not a generic plan.
-                <br />
-                <span className="text-white/40">Yours. Only yours.</span>
-              </h2>
-              <p className="text-white/45 text-lg leading-relaxed mb-10">
-                Every protocol is built from your actual blood values. What works for someone else may actively harm you. We give you exactly what your body needs — including peptide and longevity stacks.
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: "Energy", value: "Fix your crash for good" },
-                  { label: "Weight", value: "Target the real blocker" },
-                  { label: "Peptides", value: "Science-backed protocol" },
-                  { label: "Longevity", value: "Slow aging, measurably" },
-                ].map((item) => (
-                  <div key={item.label} className="p-4 rounded-xl border border-white/[0.07] bg-white/[0.02] hover:border-red-500/20 transition-colors">
-                    <p className="text-red-400 text-xs font-bold uppercase tracking-widest mb-1">{item.label}</p>
-                    <p className="text-white/55 text-sm">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="relative rounded-2xl overflow-hidden h-[480px] group">
-              <img src={LIFESTYLE_IMAGE} alt="Optimal lifestyle" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#080808]/70 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="p-4 rounded-xl bg-black/75 border border-white/10 backdrop-blur-md">
-                  <p className="text-white/40 text-xs mb-2 uppercase tracking-widest">Weekly Protocol</p>
-                  <div className="space-y-1.5">
-                    {["BPC-157 · 250mcg/day", "Vitamin D · 5000 IU", "Magnesium · 400mg", "Intermittent fasting 16:8"].map((p) => (
-                      <div key={p} className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-red-500" />
-                        <span className="text-white/60 text-xs">{p}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── TESTIMONIALS ── */}
-      <section className="py-20 border-t border-white/[0.06]">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Real Results</p>
-            <h2 className="text-4xl font-bold tracking-tight">People just like you.</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              {
-                quote: "I've been 'tired all the time' for years. Testosterone and iron were both low. The protocol — including peptides — fixed both in 6 weeks. I feel 10 years younger.",
-                name: "Marcus T.",
-                role: "34 years old · Father of 2",
-                result: "↓ 7 years biological age",
-              },
-              {
-                quote: "I was doing everything right — diet, exercise — but couldn't lose weight. Insulin resistance was the problem. Once I targeted that, 18 lbs in 8 weeks.",
-                name: "Sarah K.",
-                role: "29 years old · Fitness coach",
-                result: "↓ 18 lbs in 8 weeks",
-              },
-              {
-                quote: "My doctor said everything was 'normal'. Human Upgrade showed 6 things technically normal but far from optimal. The longevity protocol changed everything.",
-                name: "David R.",
-                role: "41 years old · Entrepreneur",
-                result: "↓ 5 years biological age",
-              },
-            ].map((t, i) => (
-              <div key={i} className="p-6 rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:border-red-500/15 transition-all duration-200 group flex flex-col">
-                <div className="flex gap-0.5 mb-4">
-                  {[...Array(5)].map((_, s) => (
-                    <Star key={s} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-white/55 text-sm leading-relaxed mb-5 flex-1">"{t.quote}"</p>
-                <div className="border-t border-white/[0.06] pt-4 flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-semibold text-sm">{t.name}</p>
-                    <p className="text-white/25 text-xs mt-0.5">{t.role}</p>
-                  </div>
-                  <span className="text-green-400 text-xs font-medium bg-green-400/10 px-2.5 py-1 rounded-full">{t.result}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PRICING ── */}
-      <section id="pricing" className="py-20 border-t border-white/[0.06] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.04)_0%,transparent_70%)]" />
-        <div className="max-w-4xl mx-auto px-6 relative">
-          <div className="text-center mb-14">
-            <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-4">Pricing</p>
-            <h2 className="text-4xl font-bold tracking-tight">Start free. No catch.</h2>
-            <p className="text-white/35 mt-3">Most people see results with just their first upload.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Free */}
-            <div className="p-8 rounded-2xl border border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12] transition-all duration-200">
-              <p className="text-white/35 text-xs font-bold uppercase tracking-widest mb-4">Free</p>
-              <div className="text-5xl font-black mb-1">$0</div>
-              <p className="text-white/25 text-sm mb-8">No credit card. No tricks.</p>
-              <ul className="space-y-3 mb-8">
-                {[
-                  "1 blood test analysis/month",
-                  "Full biomarker breakdown",
-                  "Biological age score",
-                  "Basic optimization plan",
-                ].map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-white/45 text-sm">
-                    <Check className="w-4 h-4 text-white/20 flex-shrink-0" />{f}
-                  </li>
+              <p className="hl-lead rev">No appointments. No expensive labs. Just upload what you have — a PDF or a phone photo — and get a system that works only for you.</p>
+              <ul className="hl-feat rev">
+                {[["01", "50+ biomarkers, instantly read", "AI extracts and benchmarks every marker against optimal longevity ranges."],
+                  ["02", "Nutrition, training & peptide protocols", "Sequenced and timed from your exact data — not a generic plan."],
+                  ["03", "One daily score", "A single number that tells you if today moved you younger or older."],
+                  ["04", "Wearable sync", "Sleep, HRV and recovery folded into your longevity model."]].map((f) => (
+                  <li key={f[0]}><span className="n">{f[0]}</span><div><h4>{f[1]}</h4><p>{f[2]}</p></div></li>
                 ))}
               </ul>
-              <button
-                onClick={() => setLocation("/register")}
-                className="w-full py-3.5 rounded-full border border-white/15 text-white/60 hover:text-white hover:border-white/30 text-sm font-medium transition-all"
-              >
-                Get started free
-              </button>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Beta */}
-            <div className="relative p-8 rounded-2xl border border-red-500/35 bg-red-600/[0.04] overflow-hidden hover:border-red-500/50 transition-all duration-200">
-              {/* top glow line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/70 to-transparent" />
-              {/* Red glow */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-red-500/10 rounded-full blur-3xl" />
-
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-red-400 text-xs font-bold uppercase tracking-widest">Beta Access</p>
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30 rounded-full px-2 py-0.5 uppercase tracking-wide">50 spots only</span>
+      <section className="hl-sec" id="goals">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">Built around your goal</p>
+          <h2 className="hl-st rev">One system.<br /><span className="grad">Every goal.</span></h2>
+          <p className="hl-lead rev">Pick where you're headed. Your nutrition, workout plan and daily routine re-engineer themselves around it — and around your latest biomarkers.</p>
+          <div className="hl-gtabs rev">
+            {(Object.keys(GOALS) as (keyof typeof GOALS)[]).map((k) => (
+              <button key={k} className={"gt" + (goal === k ? " on" : "")} onClick={() => setGoal(k)}>{GOALS[k].label}</button>
+            ))}
+          </div>
+          <div className="hl-gbanner rev">
+            <img src={g.img} alt="" key={g.img} />
+            <div className="gbov" />
+            <div className="gbcap"><span className="gt-lab">Your goal</span><p className="gsum">{g.sum}</p></div>
+          </div>
+          <div className="hl-ggrid rev">
+            {[["Nutrition", g.nutri, "drop"], ["Workout plan", g.train, "bar"], ["Daily routine", g.rout, "clock"]].map((p, pi) => (
+              <div className="hl-gcard" key={pi}>
+                <div className="gh">
+                  <span className="gi">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                      {p[2] === "drop" && <path d="M12 3c-3 4-6 6-6 10a6 6 0 0012 0c0-4-3-6-6-10z" />}
+                      {p[2] === "bar" && <path d="M6 7v10M18 7v10M6 9h12M6 15h12" />}
+                      {p[2] === "clock" && <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>}
+                    </svg>
+                  </span>
+                  <div><span className="gt-lab">Pillar 0{pi + 1}</span><h4>{p[0] as string}</h4></div>
                 </div>
+                <ul>{(p[1] as string[]).map((x, i) => <li key={i} className="fade">{x}</li>)}</ul>
               </div>
-
-              <div className="flex items-end gap-3 mb-1">
-                <div className="text-6xl font-black text-white">$1</div>
-                <div className="pb-2 text-white/40 text-lg">/month</div>
-              </div>
-              <div className="flex items-center gap-3 mb-8">
-                <span className="text-white/25 text-sm line-through">normally $29</span>
-                <span className="text-red-400 text-xs font-bold bg-red-500/15 px-2 py-0.5 rounded-full">SAVE 97%</span>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                {[
-                  "Unlimited blood test uploads",
-                  "Peptide & longevity protocol",
-                  "Hormone optimization roadmap",
-                  "Biological age tracking",
-                  "Weekly progress report",
-                  "Sleep & nutrition plan",
-                ].map((f) => (
-                  <li key={f} className="flex items-center gap-3 text-white/75 text-sm">
-                    <Check className="w-4 h-4 text-red-400 flex-shrink-0" />{f}
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => setLocation("/register?plan=beta_monthly")}
-                className="w-full py-4 rounded-full bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_50px_rgba(220,38,38,0.4)]"
-              >
-                <Zap className="w-4 h-4" />
-                Claim Your Beta Spot — $1/mo
-              </button>
-              <p className="text-center text-white/20 text-xs mt-3">Credit card required · Cancel anytime</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FINAL CTA ── */}
-      <section className="py-28 border-t border-white/[0.06] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.07)_0%,transparent_65%)]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-red-600/5 rounded-full blur-[80px] pointer-events-none" />
-        <div className="relative max-w-3xl mx-auto px-6 text-center">
-          <p className="text-red-500 text-xs font-bold uppercase tracking-[0.3em] mb-6">Don't wait</p>
-          <h2 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
-            Your best version<br />is in your blood test.
-          </h2>
-          <p className="text-white/40 text-lg mb-4">
-            Your last blood test is sitting somewhere. Upload it now and find out what it's been trying to tell you.
-          </p>
-          <p className="text-white/55 text-base mb-10 font-medium">Takes 60 seconds. First 50 people get beta access for $1/month.</p>
-          <button
-            onClick={() => setLocation("/register")}
-            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-10 py-4 rounded-full text-base transition-all duration-200 shadow-[0_0_50px_rgba(220,38,38,0.3)] hover:shadow-[0_0_70px_rgba(220,38,38,0.45)]"
-          >
-            Upload My Blood Test — Free
-            <ChevronRight className="w-5 h-5" />
-          </button>
-          <p className="text-white/20 text-sm mt-4">No credit card required · Results in 60 seconds</p>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section className="py-24 bg-[#060606] border-t border-white/[0.06]" id="faq">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-red-500 mb-3 block">FAQ</span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">Questions we get a lot</h2>
-          </div>
-          <div className="space-y-3">
-            {[
-              {
-                q: "Do I need to order new blood tests?",
-                a: "No — just upload whatever you have. Any standard blood test from your doctor, a pharmacy, or a home test kit works. Even an old one gives useful insights.",
-              },
-              {
-                q: "What exactly is 'biological age'?",
-                a: "Your biological age is how old your body actually functions — independent of your birthday. We calculate it from your blood markers and give you a precise score. Then we show you how to lower it.",
-              },
-              {
-                q: "What are peptides and why do you recommend them?",
-                a: "Peptides are short chains of amino acids that signal your body to repair, regenerate, and optimize — things like BPC-157 for healing, TB-500 for recovery, or GHK-Cu for anti-aging. We only recommend what your blood data suggests you actually need.",
-              },
-              {
-                q: "I'm not an athlete or biohacker. Is this for me?",
-                a: "Absolutely. Most users are regular people — parents, professionals, entrepreneurs — who feel tired or want to age better. You don't need to be a biohacker. If you want more energy and to live longer, this is for you.",
-              },
-              {
-                q: "How is this different from talking to my doctor?",
-                a: "Your doctor checks if values are in the 'normal' range. Normal doesn't mean optimal. We analyze where values sit within the optimal range for peak performance and longevity. Most people are 'normal' but far from their best.",
-              },
-              {
-                q: "How quickly will I feel a difference?",
-                a: "Most people notice improved energy within 2–4 weeks. Measurable biomarker changes in 60–90 days. Biological age can drop 3–8 years in 6 months with consistent follow-through.",
-              },
-            ].map(({ q, a }, i) => (
-              <FaqItem key={i} question={q} answer={a} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-white/[0.06] py-10 bg-[#060606]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <Logo size="sm" />
-            <div className="flex items-center gap-6 text-white/25 text-sm">
-              <button onClick={() => setLocation("/pricing")} className="hover:text-white/60 transition-colors">Pricing</button>
-              <button onClick={() => setLocation("/privacy")} className="hover:text-white/60 transition-colors">Privacy</button>
-              <button onClick={() => setLocation("/terms")} className="hover:text-white/60 transition-colors">Terms</button>
+      <section className="hl-sec">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">Biological age engine</p>
+          <h2 className="hl-st rev">Older on paper.<br /><span className="grad">Younger in reality.</span></h2>
+          <div className="hl-bio">
+            <div className="hl-ring rev">
+              <svg width="260" height="260" viewBox="0 0 280 280">
+                <circle cx="140" cy="140" r="124" fill="none" stroke="rgba(242,238,230,.06)" strokeWidth="14" />
+                <circle cx="140" cy="140" r="124" fill="none" stroke="url(#hg)" strokeWidth="14" strokeLinecap="round" strokeDasharray="779" strokeDashoffset="200" transform="rotate(-90 140 140)" />
+                <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#D43F30" /><stop offset="1" stopColor="#F2EEE6" /></linearGradient></defs>
+              </svg>
+              <div className="ctr"><b className="gradc">32</b><small>BODY AGE</small></div>
+              <div className="biorow">
+                <div><span>Chronological</span><b>40</b></div>
+                <div><span>Body age</span><b className="gradc">32</b></div>
+                <div><span>Reversed</span><b style={{ color: "#37F5B5" }}>−8</b></div>
+              </div>
             </div>
-            <div className="flex items-center gap-5">
-              <a href="https://instagram.com/thehumanupgradeapp" target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/60 transition-colors" aria-label="Instagram">
-                <SiInstagram className="w-4 h-4" />
-              </a>
-              <a href="https://tiktok.com/@humanupgrade" target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/60 transition-colors" aria-label="TikTok">
-                <SiTiktok className="w-4 h-4" />
-              </a>
+            <div>
+              <p className="hl-lead rev">We benchmark 50+ biomarkers against validated aging models to estimate how old your body actually is — then show you exactly which levers move the number.</p>
+              <p className="hl-manif rev" style={{ fontSize: "clamp(22px,3vw,38px)", marginTop: 24 }}>Most people see results with their <span className="gradc">first upload.</span></p>
             </div>
-          </div>
-          <div className="mt-8 pt-6 border-t border-white/[0.04] text-center">
-            <p className="text-white/15 text-xs">
-              © 2025 Human Upgrade. Not a medical service. All recommendations are educational. Consult your doctor for medical decisions.
-            </p>
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section className="hl-sec" id="pricing">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">Access</p>
+          <h2 className="hl-st rev">Start free. <span className="grad">No catch.</span></h2>
+          <p className="hl-lead rev">First 50 people get full beta access for $1/month. No credit card to see your biological age.</p>
+          <div className="hl-prices">
+            {[{ n: "Free", a: "$0", per: "", d: "See your biological age in 60s", f: ["1 biomarker upload", "Biological age score", "Top 3 red flags"], pop: false, cta: "Start free", alt: true },
+              { n: "Beta", a: "$1", per: "/mo", d: "Full access · first 50 users only", f: ["Unlimited uploads · 50+ markers", "Nutrition, workout & peptide plans", "Daily score + wearable sync", "Weekly re-tuning to your goal"], pop: true, cta: "Claim beta access", alt: false },
+              { n: "Pro", a: "$29", per: "/mo", d: "For serious optimizers", f: ["Everything in Beta", "Cohort benchmarking", "Priority lab analysis"], pop: false, cta: "Go Pro", alt: true }].map((p) => (
+              <div className={"hl-price" + (p.pop ? " pop" : "")} key={p.n}>
+                <span className="pn">{p.n}</span>
+                <div className="amt">{p.a}{p.per && <small>{p.per}</small>}</div>
+                <p className="pd">{p.d}</p>
+                <ul className="pf">{p.f.map((x, i) => <li key={i}>{check}{x}</li>)}</ul>
+                <button className={"pbtn" + (p.alt ? " alt" : "")} onClick={() => setLocation("/register")}>{p.cta}</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="hl-sec">
+        <div className="hl-wrap">
+          <p className="hl-kick rev">Questions we get a lot</p>
+          <h2 className="hl-st rev">Good to <span className="gradc">know.</span></h2>
+          <div className="hl-faq">
+            {FAQS.map((q, i) => (
+              <div className={"q" + (faq === i ? " open" : "")} key={i}>
+                <button onClick={() => setFaq(faq === i ? null : i)}>{q[0]}<span className="plus">+</span></button>
+                <div className="a" style={{ maxHeight: faq === i ? 220 : 0 }}><p>{q[1]}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="hl-wrap"><div className="hl-band rev">
+        <img src="/redesign/hero.png" alt="" /><div className="bov" />
+        <h2>Become biologically<br /><span className="grad">younger.</span></h2>
+        <p>Takes 60 seconds. First 50 people get beta access for $1/month. No credit card · results in 60 seconds.</p>
+        <button className="hl-btn" onClick={() => setLocation("/register")}>Get my biological age {arrow}</button>
+      </div></div>
+
+      <footer className="hl-foot"><div className="hl-wrap fr">
+        <div className="hl-brand sm"><Mark />HUMAN UPGRADE</div>
+        <span>© 2026 · Longevity intelligence</span>
+        <span><a onClick={() => setLocation("/privacy")}>Privacy</a> · <a onClick={() => setLocation("/terms")}>Terms</a></span>
+      </div></footer>
     </div>
   );
 }
+
+const CSS = `
+.hl{--bg:#0A0908;--ink:#F2EEE6;--muted:#938D83;--faint:#564F47;--red1:#D43F30;--red2:#F0584A;--bone2:#C9C2B5;--mint:#37F5B5;--hair:rgba(242,238,230,.07);--hair2:rgba(242,238,230,.15);position:relative;background:#0A0908;color:var(--ink);font-family:'Inter',sans-serif;overflow-x:hidden;min-height:100vh}
+.hl ::selection{background:var(--red1);color:#fff}
+.hl .grad{background:linear-gradient(96deg,var(--red1),var(--red2) 70%,#FF8C73);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hl .gradc{background:linear-gradient(96deg,#fff,var(--bone2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hl-wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 28px}
+.hl-mark{width:30px;height:auto;display:block}
+.hl-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 36px;background:linear-gradient(180deg,rgba(10,9,8,.85),transparent)}
+.hl-brand{display:flex;align-items:center;gap:12px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;letter-spacing:.05em}
+.hl-brand.sm{font-size:14px}.hl-brand.sm .hl-mark{width:24px}
+.hl-links{display:flex;gap:34px}
+.hl-links a{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:.2s}
+.hl-links a:hover{color:var(--ink)}
+.hl-pill{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:11px 20px;border-radius:100px;color:#fff;border:none;cursor:pointer;background:linear-gradient(95deg,var(--red1),var(--red2));box-shadow:0 10px 30px rgba(212,63,48,.4)}
+.hl-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 24px}
+.hl-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hl-vign{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 35%,transparent 38%,rgba(10,9,8,.72) 78%,#0A0908 100%)}
+.hl-hero>:not(.hl-canvas):not(.hl-vign){position:relative;z-index:2}
+.hl-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--red2);margin-bottom:24px}
+.hl-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red1);box-shadow:0 0 12px var(--red1);margin-right:10px;vertical-align:middle;animation:hlpulse 1.7s infinite}
+@keyframes hlpulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hl-h1{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(48px,11vw,150px);line-height:.92;letter-spacing:-.035em;text-transform:uppercase}
+.hl-h1 .ln{display:block;overflow:hidden}
+.hl-h1 .w{display:inline-block;transform:translateY(110%);opacity:0;transition:transform 1s cubic-bezier(.16,1,.3,1),opacity 1s}
+.hl.ready .hl-h1 .w{transform:none;opacity:1}
+.hl-sub{color:var(--muted);font-weight:300;font-size:clamp(15px,1.7vw,19px);max-width:46ch;margin:28px auto 0;opacity:0;transition:.9s .5s}
+.hl.ready .hl-sub{opacity:1}
+.hl-ctas{display:flex;gap:13px;justify-content:center;margin-top:34px;flex-wrap:wrap;opacity:0;transition:.9s .65s}
+.hl.ready .hl-ctas{opacity:1}
+.hl-btn{display:inline-flex;align-items:center;gap:10px;font-weight:500;font-size:15px;cursor:pointer;border:none;padding:16px 28px;border-radius:100px;color:#fff;background:linear-gradient(95deg,var(--red1),var(--red2));box-shadow:0 14px 40px rgba(212,63,48,.42)}
+.hl-btn.alt{background:rgba(242,238,230,.05);box-shadow:inset 0 0 0 1px var(--hair2);color:var(--ink)}
+.hl-meta{position:absolute;bottom:34px;left:0;right:0;display:flex;justify-content:space-between;padding:0 36px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);opacity:0;transition:.9s 1s}
+.hl.ready .hl-meta{opacity:1}
+.hl-meta .sc{display:flex;align-items:center;gap:8px}
+.hl-meta .sc i{display:block;width:1px;height:32px;background:linear-gradient(var(--red1),transparent)}
+.hl-marq{border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:20px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:2;background:rgba(10,9,8,.55)}
+.hl-marq .row{display:inline-block;animation:hlslide 26s linear infinite;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:28px;text-transform:uppercase}
+.hl-marq .row>span>span:first-child{margin:0 26px}
+.hl-marq .o{color:transparent;-webkit-text-stroke:1px var(--faint)}.hl-marq .star{color:var(--red1)}
+@keyframes hlslide{to{transform:translateX(-50%)}}
+.hl-sec{position:relative;z-index:2;padding:120px 0;background:#0A0908}
+.hl-kick{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--red2);display:inline-flex;align-items:center;gap:10px}
+.hl-kick::before{content:"";width:30px;height:1px;background:var(--red1)}
+.hl-st{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(34px,5vw,70px);letter-spacing:-.03em;line-height:1;margin-top:20px;text-transform:uppercase}
+.hl-lead{color:var(--muted);font-weight:300;font-size:18px;max-width:56ch;margin-top:18px}
+.hl-manif{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(26px,4.4vw,58px);line-height:1.12;letter-spacing:-.02em;max-width:18ch;margin-top:26px}
+.hl-manif b{color:var(--faint);font-weight:500}
+.hl .rev{opacity:0;transform:translateY(36px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.hl .rev.in{opacity:1;transform:none}
+.hl-fig,.hl-gbanner,.hl-gcard,.hl-ring,.hl-price,.hl-band{background:linear-gradient(180deg,rgba(242,238,230,.05),rgba(242,238,230,.02));border:1px solid var(--hair)}
+.hl-split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:56px}
+.hl-fig{position:relative;overflow:hidden;aspect-ratio:4/5;border-radius:24px;background:#100c0b}
+.hl-fig img{width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:.96}
+.hl-fig .ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(10,9,8,.7))}
+.hl-fig .cap{position:absolute;left:20px;bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.hl-fig .cap b{color:var(--red2)}
+.hl-feat{list-style:none;margin-top:26px;padding:0;display:flex;flex-direction:column}
+.hl-feat li{display:flex;gap:18px;padding:20px 0;border-top:1px solid var(--hair)}
+.hl-feat li:last-child{border-bottom:1px solid var(--hair)}
+.hl-feat .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red2);padding-top:3px}
+.hl-feat h4{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:20px}
+.hl-feat p{color:var(--muted);font-size:14.5px;font-weight:300;margin-top:3px}
+.hl-gtabs{display:flex;gap:11px;flex-wrap:wrap;margin-top:44px}
+.hl-gtabs .gt{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:13px 22px;border-radius:100px;border:1px solid var(--hair2);background:rgba(242,238,230,.02);transition:.2s}
+.hl-gtabs .gt.on{color:#fff;border-color:transparent;background:linear-gradient(95deg,var(--red1),var(--red2));box-shadow:0 10px 30px rgba(212,63,48,.38)}
+.hl-gbanner{position:relative;margin-top:22px;border-radius:22px;overflow:hidden;aspect-ratio:21/7;min-height:200px;background:#100c0b}
+.hl-gbanner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.95;mix-blend-mode:screen;animation:hlfade .5s ease}
+@keyframes hlfade{from{opacity:0}to{opacity:.95}}
+.hl-gbanner .gbov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,9,8,.92) 8%,rgba(10,9,8,.35) 58%,transparent)}
+.hl-gbanner .gbcap{position:absolute;left:32px;bottom:28px;right:32px}
+.gt-lab{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--red2)}
+.gsum{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(20px,2.6vw,32px);letter-spacing:-.01em;margin-top:6px}
+.hl-ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.hl-gcard{padding:26px;border-radius:20px}
+.hl-gcard .gh{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.hl-gcard .gi{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--hair);background:rgba(242,238,230,.03)}
+.hl-gcard .gi svg{width:20px;height:20px;stroke:var(--red2)}
+.hl-gcard h4{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:19px}
+.hl-gcard ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:13px}
+.hl-gcard li{display:flex;gap:11px;font-size:14px;color:var(--muted);font-weight:300}
+.hl-gcard li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red1);margin-top:7px;flex-shrink:0;box-shadow:0 0 8px var(--red1)}
+.fade{animation:hlfi .45s ease}
+@keyframes hlfi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hl-bio{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;margin-top:56px}
+.hl-ring{padding:36px;text-align:center;position:relative;border-radius:20px}
+.hl-ring .ctr{position:relative;margin-top:-200px;margin-bottom:120px;pointer-events:none}
+.hl-ring .ctr b{font-family:'Space Grotesk',sans-serif;font-size:80px;font-weight:600;line-height:1;display:block}
+.hl-ring .ctr small{display:block;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--red2);margin-top:4px}
+.hl-ring .biorow{display:flex;border-top:1px solid var(--hair);padding-top:20px;margin-top:6px}
+.hl-ring .biorow div{flex:1}
+.hl-ring .biorow span{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.hl-ring .biorow b{display:block;font-family:'Space Grotesk',sans-serif;font-size:28px;margin-top:6px}
+.hl-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px;align-items:stretch}
+.hl-price{padding:34px 28px;display:flex;flex-direction:column;border-radius:20px}
+.hl-price.pop{border:1px solid rgba(212,63,48,.5);box-shadow:0 0 56px rgba(212,63,48,.2);position:relative}
+.hl-price.pop::before{content:"MOST POPULAR";position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;padding:6px 15px;border-radius:100px;color:#fff;background:linear-gradient(95deg,var(--red1),var(--red2));box-shadow:0 8px 22px rgba(212,63,48,.55)}
+.hl-price .pn{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hl-price .amt{font-family:'Space Grotesk',sans-serif;font-size:54px;font-weight:600;margin:14px 0 2px;letter-spacing:-.02em}
+.hl-price .amt small{font-size:15px;color:var(--faint);font-weight:400}
+.hl-price .pd{color:var(--faint);font-size:13px;margin-bottom:22px}
+.hl-price .pf{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px;margin:6px 0 26px}
+.hl-price .pf li{display:flex;gap:10px;font-size:14px;color:var(--muted)}
+.hl-price .pf li svg{flex-shrink:0;margin-top:2px}
+.hl-price .pbtn{margin-top:auto;display:flex;justify-content:center;align-items:center;gap:8px;font-weight:500;font-size:14px;cursor:pointer;padding:15px;border-radius:100px;border:none;color:#fff;background:linear-gradient(95deg,var(--red1),var(--red2));box-shadow:0 12px 34px rgba(212,63,48,.4)}
+.hl-price .pbtn.alt{background:rgba(242,238,230,.05);box-shadow:inset 0 0 0 1px var(--hair2);color:var(--ink)}
+.hl-faq{max-width:840px;margin:50px auto 0}
+.hl-faq .q{border-bottom:1px solid var(--hair)}
+.hl-faq .q button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:26px 4px;background:none;border:none;color:var(--ink);font-family:'Space Grotesk',sans-serif;font-size:clamp(17px,2.3vw,25px);font-weight:500;text-align:left;cursor:pointer}
+.hl-faq .plus{color:var(--red1);font-size:25px;transition:transform .3s;flex-shrink:0}
+.hl-faq .q.open .plus{transform:rotate(45deg)}
+.hl-faq .a{overflow:hidden;transition:max-height .35s ease}
+.hl-faq .a p{padding:0 4px 26px;color:var(--muted);font-weight:300;font-size:16px;max-width:70ch}
+.hl-band{position:relative;border-radius:30px;overflow:hidden;padding:100px 36px;text-align:center;margin:30px 0 80px}
+.hl-band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5;mix-blend-mode:screen}
+.hl-band .bov{position:absolute;inset:0;background:radial-gradient(80% 120% at 50% 0%,rgba(212,63,48,.4),transparent 60%),linear-gradient(180deg,rgba(10,9,8,.4),rgba(10,9,8,.85))}
+.hl-band h2{position:relative;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(34px,6vw,82px);letter-spacing:-.03em;line-height:.95;text-transform:uppercase}
+.hl-band p{position:relative;color:var(--muted);margin:20px auto 30px;max-width:50ch;font-weight:300;font-size:17px}
+.hl-band .hl-btn{position:relative}
+.hl-foot{position:relative;z-index:2;background:#0A0908;border-top:1px solid var(--hair);padding:48px 0}
+.hl-foot .fr{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.hl-foot .fr a{cursor:pointer}.hl-foot .fr a:hover{color:var(--ink)}
+@media(max-width:900px){.hl-links{display:none}.hl-split,.hl-bio{grid-template-columns:1fr;gap:36px}.hl-prices,.hl-ggrid{grid-template-columns:1fr}.hl-sec{padding:80px 0}}
+@media(prefers-reduced-motion:reduce){.hl .w,.hl-sub,.hl-ctas,.hl-meta,.hl .rev{opacity:1!important;transform:none!important}}
+`;
